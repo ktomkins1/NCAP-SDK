@@ -22,7 +22,7 @@ class TestNcaplite(unittest.TestCase):
         pass
 
     def test_000_something(self):
-        pass
+        assert (ncaplite.my_stub() == 1)
 
 
 if __name__ == '__main__':
