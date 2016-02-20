@@ -15,7 +15,7 @@ ncaplite
 
 ncaplite contains a python package and reference design for implementing IEEE P21451-1 Network Capable Application Processor services
 
-* Free software: ISC license
+* Free software: MIT license
 * Documentation: https://ncaplite.readthedocs.org.
 
 Features
