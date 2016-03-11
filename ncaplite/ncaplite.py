@@ -5,8 +5,7 @@
    :platform: Unix, Windows
    :synopsis: This is just a stub module while we're framing the project out.
 
-.. moduleauthor:: Andrew Carter <andrew@invalid.com>
-
+.. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
 """
 
