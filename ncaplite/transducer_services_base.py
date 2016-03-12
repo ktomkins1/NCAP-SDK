@@ -1,4 +1,3 @@
-
 """
 .. module:: transducer_services_base
    :platform: Unix, Windows
@@ -11,6 +10,7 @@
 
 import abc
 
+
 class TimDiscoveryBase(object):
     """
     The TimDiscovery interface is provided by the IEEE 1451.0 layer
@@ -22,20 +22,17 @@ class TimDiscoveryBase(object):
 
     @abc.abstractmethod
     def report_comm_module(self, module_ids):
-        """
-        """
+
         return
 
     @abc.abstractmethod
     def report_tims(self, module_id, tim_ids):
-        """
-        """
+
         return
 
     @abc.abstractmethod
     def report_channels(self, tim_id, channel_ids, names):
-        """
-        """
+
         return
 
 
@@ -49,48 +46,49 @@ class TransducerAccessBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def  open(self, timId, channelId, transCommId):
+    def open(self, tim_id, channel_id, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def  openQoS(self, timId, channelId, qosParams, transCommId):
+    def open_qo_s(self, tim_id, channel_id, qos_params, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def openGroup(self, timIds, channelIds, transCommId):
+    def open_group(self, tim_ids, channel_ids, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def openGroupQoS(self, timIds, channelIds, qosParams, transCommId):
+    def open_group_qo_s(self, tim_ids, channel_ids, qos_params, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def close(self, transCommId):
+    def close(self, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def readData (self, transCommId, timeout, SamplingMode, result):
+    def read_data(self, trans_comm_id, timeout, sampling_mode, result):
         return
 
     @abc.abstractmethod
-    def writeData (self, transCommId, timeout, SamplingMode, value):
+    def write_data(self, trans_comm_id, timeout, sampling_mode, value):
         return
 
     @abc.abstractmethod
-    def startReadData(self, transCommId, triggerTime, timeout, SamplingMode, callback, operationId):
+    def start_read_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def startWriteData(self, transCommId, triggerTime, timeout, SamplingMode, value, callback, operationId):
+    def start_write_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, value, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def startStream(self, transCommId, callback, operationId):
+    def start_stream(self, trans_comm_id, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def cancel(self, operationId):
+    def cancel(self, operation_id):
         return
+
 
 class TransducerManagerBase(object):
     """
@@ -99,51 +97,52 @@ class TransducerManagerBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def lock(self, transCommId,  timeout):
+    def lock(self, trans_comm_id, timeout):
         return
 
     @abc.abstractmethod
-    def unlock(self, transCommId):
+    def unlock(self, trans_comm_id):
         return
 
     @abc.abstractmethod
-    def reportLocks(self, transCommIds):
+    def report_locks(self, trans_comm_ids):
         return
 
     @abc.abstractmethod
-    def breakLock(tself, ransCommId):
+    def break_lock(self, rans_comm_id):
         return
 
     @abc.abstractmethod
-    def sendCommand( self, transCommId, timeout, cmdClassId, cmdFunctionId, Args, outArgs):
+    def send_command(self, trans_comm_id, timeout, cmd_class_id, cmd_function_id, args, out_args):
         return
 
     @abc.abstractmethod
-    def startCommand(self, transCommId, triggerTime, timeout, cmdClassId, cmdFunctionId, Args, callback, operationId):
+    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id, cmd_function_id,
+                      args, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def trigger(self, transCommId, triggerTime, timeout, SamplgMode):
+    def trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode):
         return
 
     @abc.abstractmethod
-    def configureAttributes(self, transCommId, attributeNames):
+    def configure_attributes(self, trans_comm_id, attribute_names):
         return
 
     @abc.abstractmethod
-    def startTrigger(self, transCommId, triggerTime, timeout, SamplgMode, AppCallbackcallback, operationId):
+    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode, app_callbackcallback, operation_id):
         return
 
     @abc.abstractmethod
-    def clear(self, transCommId, timeout, clearMode):
+    def clear(self, trans_comm_id, timeout, clear_mode):
         return
 
     @abc.abstractmethod
-    def registerStatusChange(self, transCommId, timeout, callback, operationId):
+    def register_status_change(self, trans_comm_id, timeout, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def unregisterStatusChange(self, transCommId):
+    def unregister_status_change(self, trans_comm_id):
         return
 
 
@@ -151,26 +150,26 @@ class TedsManagerBase(object):
     """
 
     """
-    __metaclass__ = abc.ABCMeta
+    _metaclass_ = abc.ABCMeta
 
     @abc.abstractmethod
-    def readTeds(self, transCommId, timeout, tedsType, teds):
+    def read_teds(self, trans_comm_id, timeout, teds_type, teds):
         return
 
     @abc.abstractmethod
-    def writeTeds(self, transCommId, timeout, tedsType, teds):
+    def write_teds(self, trans_comm_id, timeout, teds_type, teds):
         return
 
     @abc.abstractmethod
-    def readRawTeds(self, transCommId, timeout, tedsType, rawTeds):
+    def read_raw_teds(self, trans_comm_id, timeout, teds_type, raw_teds):
         return
 
     @abc.abstractmethod
-    def writeRawTeds(self, transCommId, timeout, tedsType, rawTeds):
+    def write_raw_teds(self, trans_comm_id, timeout, teds_type, raw_teds):
         return
 
     @abc.abstractmethod
-    def updateTedsCache(self, transCommId, timeout, tedsType):
+    def update_teds_cache(self, trans_comm_id, timeout, teds_type):
         return
 
 
@@ -181,8 +180,9 @@ class CommManagerBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def getCommModule(self, moduleId, commObject, type, technologyId):
+    def get_comm_module(self, module_id, comm_object, comm_type, technology_id):
         return
+
 
 class ApiCallbackBase(object):
     """
@@ -191,21 +191,21 @@ class ApiCallbackBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def measurementUpdate(self, operationId, measValues, status):
+    def measurement_update(self, operation_id, meas_values, status):
         return
 
     @abc.abstractmethod
-    def  actuationComplete(self, operationId, status):
+    def actuation_complete(self, operation_id, status):
         return
 
     @abc.abstractmethod
-    def statusChange(self, operationId, status):
+    def status_change(self, operation_id, status):
         return
 
     @abc.abstractmethod
-    def commandComplete(self, operationId, outArgs, status):
+    def command_complete(self, operation_id, out_args, status):
         return
 
     @abc.abstractmethod
-    def triggerComplete(self, operationId, status):
+    def trigger_complete(self, operation_id, status):
         return
