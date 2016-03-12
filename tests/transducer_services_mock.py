@@ -20,165 +20,131 @@ from ncaplite.transducer_services_base import ApiCallbackBase
 class TimDiscoveryMock(TimDiscoveryBase):
 
     def report_comm_module(self, module_ids):
-        """
-        """
-        return 0
-
+        return
 
     def report_tims(self, module_id, tim_ids):
-        """
-        """
-        return 0
-
+        return
 
     def report_channels(self, tim_id, channel_ids, names):
-        """
-        """
-        return 0
+        return
+
 
 class TransducerAccessMock(TransducerAccessBase):
 
-    def  open(self, timId, channelId, transCommId):
-        return 0
+    def open(self, tim_id, channel_id, trans_comm_id):
+        return
 
+    def open_qo_s(self, tim_id, channel_id, qos_params, trans_comm_id):
+        return
 
-    def  openQoS(self, timId, channelId, qosParams, transCommId):
-        return 0
+    def open_group(self, tim_ids, channel_ids, trans_comm_id):
+        return
 
+    def open_group_qo_s(self, tim_ids, channel_ids, qos_params, trans_comm_id):
+        return
 
-    def openGroup(self, timIds, channelIds, transCommId):
-        return 0
+    def close(self, trans_comm_id):
+        return
 
+    def read_data(self, trans_comm_id, timeout, sampling_mode, result):
+        return
 
-    def openGroupQoS(self, timIds, channelIds, qosParams, transCommId):
-        return 0
+    def write_data(self, trans_comm_id, timeout, sampling_mode, value):
+        return
 
+    def start_read_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, callback, operation_id):
+        return
 
-    def close(self, transCommId):
-        return 0
+    def start_write_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, value, callback, operation_id):
+        return
 
+    def start_stream(self, trans_comm_id, callback, operation_id):
+        return
 
-    def readData (self, transCommId, timeout, SamplingMode, result):
-        return 0
-
-
-    def writeData (self, transCommId, timeout, SamplingMode, value):
-        return 0
-
-
-    def startReadData(self, transCommId, triggerTime, timeout, SamplingMode, callback, operationId):
-        return 0
-
-
-    def startWriteData(self, transCommId, triggerTime, timeout, SamplingMode, value, callback, operationId):
-        return 0
-
-
-    def startStream(self, transCommId, callback, operationId):
-        return 0
-
-
-    def cancel(self, operationId):
-        return 0
+    def cancel(self, operation_id):
+        return
 
 
 class TransducerManagerMock(TransducerManagerBase):
 
-    def lock(self, transCommId,  timeout):
-        return 0
+    def lock(self, trans_comm_id,  timeout):
+        return
 
+    def unlock(self, trans_comm_id):
+        return
 
-    def unlock(self, transCommId):
-        return 0
+    def report_locks(self, trans_comm_ids):
+        return
 
+    def break_lock(self, trans_comm_id):
+        return
 
-    def reportLocks(self, transCommIds):
-        return 0
+    def send_command(self, trans_comm_id, timeout, cmd_class_id, cmd_function_id, args, out_args):
+        return
 
+    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id, cmd_function_id, args, callback,
+                      operation_id):
+        return
 
-    def breakLock(tself, ransCommId):
-        return 0
+    def trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode):
+        return
 
+    def configure_attributes(self, trans_comm_id, attribute_names):
+        return
 
-    def sendCommand( self, transCommId, timeout, cmdClassId, cmdFunctionId, Args, outArgs):
-        return 0
+    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode, app_callbackcallback, operation_id):
+        return
 
+    def clear(self, trans_comm_id, timeout, clear_mode):
+        return
 
-    def startCommand(self, transCommId, triggerTime, timeout, cmdClassId, cmdFunctionId, Args, callback, operationId):
-        return 0
+    def register_status_change(self, trans_comm_id, timeout, callback, operation_id):
+        return
 
-
-    def trigger(self, transCommId, triggerTime, timeout, SamplgMode):
-        return 0
-
-
-    def configureAttributes(self, transCommId, attributeNames):
-        return 0
-
-
-    def startTrigger(self, transCommId, triggerTime, timeout, SamplgMode, AppCallbackcallback, operationId):
-        return 0
-
-
-    def clear(self, transCommId, timeout, clearMode):
-        return 0
-
-
-    def registerStatusChange(self, transCommId, timeout, callback, operationId):
-        return 0
-
-
-    def unregisterStatusChange(self, transCommId):
-        return 0
+    def unregister_status_change(self, trans_comm_id):
+        return
 
 
 class TedsManagerMock(TedsManagerBase):
 
-    def readTeds(self, transCommId, timeout, tedsType, teds):
-        return 0
+    def read_teds(self, trans_comm_id, timeout, teds_type, teds):
+        return
 
+    def write_teds(self, trans_comm_id, timeout, teds_type, teds):
+        return
 
-    def writeTeds(self, transCommId, timeout, tedsType, teds):
-        return 0
+    def read_raw_teds(self, trans_comm_id, timeout, teds_type, raw_teds):
+        return
 
+    def write_raw_teds(self, trans_comm_id, timeout, teds_type, raw_teds):
+        return
 
-    def readRawTeds(self, transCommId, timeout, tedsType, rawTeds):
-        return 0
-
-
-    def writeRawTeds(self, transCommId, timeout, tedsType, rawTeds):
-        return 0
-
-
-    def updateTedsCache(self, transCommId, timeout, tedsType):
-        return 0
+    def update_teds_cache(self, trans_comm_id, timeout, teds_type):
+        return
 
 
 class CommManagerMock(CommManagerBase):
 
-    def getCommModule(self, moduleId, commObject, type, technologyId):
-        return 0
+    def get_comm_module(self, module_id, comm_object, comm_type, technology_id):
+        return
+
 
 class ApiCallbackMock(ApiCallbackBase):
 
-    def measurementUpdate(self, operationId, measValues, status):
-        return 0
+    def measurement_update(self, operation_id, meas_values, status):
+        return
 
+    def actuation_complete(self, operation_id, status):
+        return
 
-    def  actuationComplete(self, operationId, status):
-        return 0
+    def status_change(self, operation_id, status):
+        return
 
+    def command_complete(self, operation_id, out_args, status):
+        return
 
-    def statusChange(self, operationId, status):
-        return 0
-
-
-    def commandComplete(self, operationId, outArgs, status):
-        return 0
-
-
-    def triggerComplete(self, operationId, status):
-        return 0
+    def trigger_complete(self, operation_id, status):
+        return
 
 
 if __name__ == '__main__':
