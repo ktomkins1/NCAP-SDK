@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ncap_config>
+  <roster_path>roster.xml</roster_path>
+  <broker_address>
+      <address>10.10.100.4</address>
+      <port>5222</port>
+  </broker_address>
+  <ncap_identification>
+      <jid>ncap@ncaplite.loc</jid>
+      <password>mypassword</password>
+      <ncap_id>12345</ncap_id>
+      <ncap_type>server</ncap_type>
+      <ncap_name>mr. ncap</ncap_name>
+      <model_number>11111</model_number>
+      <serial_number>22222</serial_number>
+      <manufacturer_id>33333</manufacturer_id>
+  </ncap_identification>
+</ncap_config>
