@@ -1,3 +1,6 @@
+.. image:: https://badge.waffle.io/jeethridge/ncaplite.png?label=ready&title=Ready 
+ :target: https://waffle.io/jeethridge/ncaplite
+ :alt: 'Stories in Ready'
 ===============================
 ncaplite
 ===============================
