@@ -60,3 +60,6 @@ target/
 
 #IDE project files
 .idea/
+
+#Vagrant
+.vagrant/
