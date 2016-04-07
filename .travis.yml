@@ -1,7 +1,6 @@
 # Config file for automatic testing at travis-ci.org
 # This file will be regenerated if you run travis_pypi_setup.py
 
-sudo required
 
 language: python
 
@@ -12,12 +11,10 @@ env:
   - TOXENV=py26
   - TOXENV=pypy
 
-before install:
-  - provisioning.sh
-
-
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -U tox
+install:
+  - pip install -U tox
+  - ./provisioning.sh
 
 # command to run tests, e.g. python setup.py test
 script: tox
