@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-test_ncaplite
+ncaplite_test
 ----------------------------------
 
 Tests for `ncaplite` module.
@@ -14,7 +14,7 @@ from ncaplite import ncaplite
 from ncaplite import network_interface
 import time
 import xml.etree.ElementTree as ET
-
+import os
 class TestNcaplite(unittest.TestCase):
 
     def setUp(self):
@@ -62,7 +62,8 @@ class TestNcaplite(unittest.TestCase):
 
 
     def test_can_read_ncap_config_file(self):
-        tree = ET.parse('testconfig.xml')
+        print("\n My CWD: "+os.getcwd()+"\n")
+        tree = ET.parse('tests/testconfig.xml')
         root = tree.getroot()
 
         roster_path=root.find('roster_path').text
@@ -88,7 +89,7 @@ class TestNcaplite(unittest.TestCase):
         assert(ncap_mfcr_id==33333)
 
         ncap = ncaplite.NCAP(ncap_id)
-        ncap.load_config('testconfig.xml')
+        ncap.load_config('tests/testconfig.xml')
         network_if = network_interface.NetworkClient(ncap.jid,ncap.password,(ncap.broker_ip,ncap.broker_port))
         ncap.register_network_interface(network_if)
         ncap.start()
