@@ -148,16 +148,16 @@ class ApiCallbackMock(ApiCallbackBase):
 
 
 if __name__ == '__main__':
-    print 'Subclass:', issubclass(TimDiscoveryMock, TimDiscoveryBase)
-    print 'Subclass:', issubclass(TransducerAccessMock, TransducerAccessBase)
-    print 'Subclass:', issubclass(TransducerManagerMock, TransducerManagerBase)
-    print 'Subclass:', issubclass(TedsManagerMock, TedsManagerBase)
-    print 'Subclass:', issubclass(CommManagerMock, CommManagerBase)
-    print 'Subclass:', issubclass(ApiCallbackMock, ApiCallbackBase)
+    print('Subclass:', issubclass(TimDiscoveryMock, TimDiscoveryBase))
+    print('Subclass:', issubclass(TransducerAccessMock, TransducerAccessBase))
+    print('Subclass:', issubclass(TransducerManagerMock, TransducerManagerBase))
+    print('Subclass:', issubclass(TedsManagerMock, TedsManagerBase))
+    print( 'Subclass:', issubclass(CommManagerMock, CommManagerBase))
+    print( 'Subclass:', issubclass(ApiCallbackMock, ApiCallbackBase))
 
-    print 'Instance:', isinstance(TimDiscoveryMock(), TimDiscoveryBase)
-    print 'Instance:', isinstance(TransducerAccessMock(), TransducerAccessBase)
-    print 'Instance:', isinstance(TransducerManagerMock(), TransducerManagerBase)
-    print 'Instance:', isinstance(TedsManagerMock(), TedsManagerBase)
-    print 'Instance:', isinstance(CommManagerMock(), CommManagerBase)
-    print 'Instance:', isinstance(ApiCallbackMock(), ApiCallbackBase)
+    print( 'Instance:', isinstance(TimDiscoveryMock(), TimDiscoveryBase))
+    print( 'Instance:', isinstance(TransducerAccessMock(), TransducerAccessBase))
+    print( 'Instance:', isinstance(TransducerManagerMock(), TransducerManagerBase))
+    print( 'Instance:', isinstance(TedsManagerMock(), TedsManagerBase))
+    print( 'Instance:', isinstance(CommManagerMock(), CommManagerBase))
+    print( 'Instance:', isinstance(ApiCallbackMock(), ApiCallbackBase))
