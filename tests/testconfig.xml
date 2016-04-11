@@ -2,7 +2,7 @@
 <ncap_config>
   <roster_path>roster.xml</roster_path>
   <broker_address>
-      <address>10.10.100.4</address>
+      <address>127.0.0.1</address>
       <port>5222</port>
   </broker_address>
   <ncap_identification>
