@@ -6,7 +6,14 @@
 # License: MIT
 #
 
-#
+#Update
+sudo apt-get update
+
+# Set up python
+sudo apt-get install python-dev python-pip -q -y
+cd /vagrant
+sudo pip install -U tox
+sudo python setup.py install
 # Install Prosody XMPP server
 sudo apt-get install prosody -y
 # Place config
@@ -18,8 +25,7 @@ sudo prosodyctl register developer ncaplite.loc mypassword
 sudo prosodyctl register ncap      ncaplite.loc mypassword
 sudo prosodyctl register unittest  ncaplite.loc mypassword
 
-# Set up python
-#TBD
+
 
 #
 # Un-comment to install nginx for static file serving

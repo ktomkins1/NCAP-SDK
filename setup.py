@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
+if os.environ.get('USER', '') == 'vagrant':
+    del os.link
 
 try:
     from setuptools import setup
@@ -15,7 +19,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'sleekxmpp','dnspython','pyasn1','pyasn1-modules'
+    'sleekxmpp', 'dnspython', 'pyasn1', 'pyasn1-modules'
 ]
 
 test_requirements = [
