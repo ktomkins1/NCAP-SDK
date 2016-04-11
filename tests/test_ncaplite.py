@@ -14,6 +14,7 @@ from ncaplite import ncaplite
 from ncaplite import network_interface
 import time
 import xml.etree.ElementTree as ET
+import os
 
 
 class TestNcaplite(unittest.TestCase):
@@ -25,8 +26,13 @@ class TestNcaplite(unittest.TestCase):
 
     def setUp(self):
         """Setup for NCAP unit tests"""
-        self.config_file_path = 'tests/testconfig.xml'
-        self.test_broker_ip = '127.0.0.1'
+        if (os.environ.get('USER', '') == 'vagrant') or ('TRAVIS' in os.environ):
+            self.config_file_path = 'tests/testconfig.xml'
+            self.test_broker_ip = '127.0.0.1'
+        else:
+            self.config_file_path = 'tests/devconfig.xml'
+            self.test_broker_ip = '10.10.100.4'
+
 
     def tearDown(self):
         """Teardown for NCAP unit tests"""
