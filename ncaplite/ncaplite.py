@@ -83,7 +83,7 @@ class NCAP(object):
         """
 
         if msg['type'] in ('chat', 'normal'):
-            print("Got ormal chat msg: "+str(msg))
+            print("Got normal chat msg: "+str(msg))
             ip=urlopen('http://icanhazip.com').read()
             msg.reply("Hi I am " + self.boundjid.full + " and I am on IP " + ip).send()
         else:
@@ -100,7 +100,3 @@ class NCAP(object):
         self.network_interface.send_presence()
         self.network_interface.get_roster()
         print(announce)
-
-
-
-
