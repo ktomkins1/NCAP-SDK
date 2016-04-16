@@ -77,6 +77,7 @@ class TestNcaplite(unittest.TestCase):
 
 
     def test_can_read_ncap_config_file(self):
+        """Test that we can read the ncap config file"""
         tree = ET.parse(self.config_file_path)
         root = tree.getroot()
 
@@ -109,6 +110,35 @@ class TestNcaplite(unittest.TestCase):
         time.sleep(1)
         ncap.stop()
 
+    def test_ncap_client_join(self):
+        """ Test the NCAPClientJoin discovery function"""
+
+        client_join_success = False
+
+        #create an NCAP instance and register it's network intergace
+        ncap = ncaplite.NCAP(12345)
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        ncap.register_network_interface(network_if)
+
+        #create a network interface client (xmpp)
+        client_jid = 'unittest@ncaplite.loc'
+        client_passwd = 'mypassword'
+        client = network_interface.NetworkClient(client_jid, client_passwd, (ncap.broker_ip, ncap.broker_port))
+
+
+        ncap.start()
+        client.run()
+        time.sleep(1)
+        client.send_message(mto='ncap@ncaplite.loc', mbody='Hello World!', mtype='chat')
+        time.sleep(1)
+
+        #Logic to check successful NCAPClientJoin goes here.
+
+        client.disconnect()
+        ncap.stop()
+
+        #assert(client_join_success)
 
 if __name__ == '__main__':
     import sys
