@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ncap_config>
-  <roster_path>roster.xml</roster_path>
+  <roster_path>tests/testroster.xml</roster_path>
   <broker_address>
       <address>127.0.0.1</address>
       <port>5222</port>

@@ -3,7 +3,8 @@
 """
 .. module:: ncaplite
    :platform: Unix, Windows
-   :synopsis: This is just a stub module while we're framing the project out.
+   :synopsis: This module defines the top-level NCAP object to be
+              used in the user application.
 
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
@@ -40,10 +41,10 @@ class NCAP(object):
         self.physical_address=0
         self.protocol_address=0
         self.client_list={}
-        self.server_lis={}
+        self.server_list={}
         self.server_client_join_list={}
         self.roster_file_path = 'roster.xml'
-        self.network_if_msg_handlers={}
+        self.msg_handlers={}
 
 
     def load_config(self, config_file_path='ncapconfig.xml'):
@@ -70,6 +71,7 @@ class NCAP(object):
     def start(self):
         print("NCAP Started")
         self.network_interface.run()
+    
 
     def stop(self):
         print("NCAP Stoped")
@@ -84,8 +86,14 @@ class NCAP(object):
 
         if msg['type'] in ('chat', 'normal'):
             print("Got normal chat msg: "+str(msg))
-            ip=urlopen('http://icanhazip.com').read()
-            msg.reply("Hi I am " + self.boundjid.full + " and I am on IP " + ip).send()
+            request = self.parse_message(msg)
+            print("Request :" + str(request))
+            if request['functionId']=='7108':
+                print('Recieved a 7108 message')
+                print(msg['from'])
+                self.discovery_service.ncap_client_join(msg['from'])
+
+
         else:
             print("Got unknown message type: "+str(msg))
 
@@ -96,7 +104,21 @@ class NCAP(object):
         """
 
 
-        announce="Network Session Start. I should announce my existance and do some bookeeeping here."
+        announce="Network Session Start."
         self.network_interface.send_presence()
         self.network_interface.get_roster()
         print(announce)
+
+    def register_discovery_service(self, discovery):
+        self.discovery_service = discovery
+
+    def parse_message(self, msg):
+        mb = str(msg['body'])
+        parse = mb.split(",")
+        functionId = parse[0]
+        print functionId
+        if functionId == '7108' or functionId == '7109':
+            return {'functionId':functionId}
+
+    def init_message_handler(self):
+        self.msg_handlers={"7108", self.discovery_service.ncap_client_join}

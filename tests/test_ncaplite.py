@@ -12,6 +12,7 @@ import unittest
 
 from ncaplite import ncaplite
 from ncaplite import network_interface
+from ncaplite import discovery_services
 import time
 import xml.etree.ElementTree as ET
 import os
@@ -27,9 +28,11 @@ class TestNcaplite(unittest.TestCase):
     def setUp(self):
         """Setup for NCAP unit tests"""
         if (os.environ.get('USER', '') == 'vagrant') or ('TRAVIS' in os.environ):
+            print("environment is virtualized")
             self.config_file_path = 'tests/testconfig.xml'
             self.test_broker_ip = '127.0.0.1'
         else:
+            print("environment is dev machine")
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
 
@@ -82,7 +85,8 @@ class TestNcaplite(unittest.TestCase):
         root = tree.getroot()
 
         roster_path = root.find('roster_path').text
-        assert(roster_path == 'roster.xml')
+        print(roster_path)
+        assert(roster_path == 'tests/testroster.xml')
         broker_ip = root.find('broker_address').find('address').text
         assert(broker_ip == self.test_broker_ip)
         broker_port = int(root.find('broker_address').find('port').text)
@@ -109,36 +113,6 @@ class TestNcaplite(unittest.TestCase):
         ncap.start()
         time.sleep(1)
         ncap.stop()
-
-    def test_ncap_client_join(self):
-        """ Test the NCAPClientJoin discovery function"""
-
-        client_join_success = False
-
-        #create an NCAP instance and register it's network intergace
-        ncap = ncaplite.NCAP(12345)
-        ncap.load_config(self.config_file_path)
-        network_if = network_interface.NetworkClient(ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
-        ncap.register_network_interface(network_if)
-
-        #create a network interface client (xmpp)
-        client_jid = 'unittest@ncaplite.loc'
-        client_passwd = 'mypassword'
-        client = network_interface.NetworkClient(client_jid, client_passwd, (ncap.broker_ip, ncap.broker_port))
-
-
-        ncap.start()
-        client.run()
-        time.sleep(1)
-        client.send_message(mto='ncap@ncaplite.loc', mbody='Hello World!', mtype='chat')
-        time.sleep(1)
-
-        #Logic to check successful NCAPClientJoin goes here.
-
-        client.disconnect()
-        ncap.stop()
-
-        #assert(client_join_success)
 
 if __name__ == '__main__':
     import sys

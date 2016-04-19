@@ -43,13 +43,6 @@ class NetworkClient(sleekxmpp.ClientXMPP):
     def run(self):
         # Connect to the XMPP server and start processing XMPP stanzas.
         if self.connect(self.broker_address,reattempt=False):
-            # If you do not have the dnspython library installed, you will need
-            # to manually specify the name of the server if it does not match
-            # the one in the JID. For example, to use Google Talk you would
-            # need to use:
-            #
-            # if xmpp.connect(('talk.google.com', 5222)):
-            #     ...
             #self.process(block=True)
             self.process()
             print("Done")
