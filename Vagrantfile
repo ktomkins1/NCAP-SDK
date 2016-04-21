@@ -29,8 +29,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.network :private_network, ip: '10.10.100.4'
   end
 
-
-  config.vm.provision :shell, :path => "provisioning.sh"
+  config.vm.provision :shell do |s|
+    s.inline = "cd /vagrant && bash provisioning.sh"
+  end
 
   config.vm.provider "virtualbox" do |vb|
     vb.name = "ncaplite"

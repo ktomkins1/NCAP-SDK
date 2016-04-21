@@ -11,13 +11,13 @@ sudo apt-get update
 
 # Set up python
 sudo apt-get install python-dev python-pip -q -y
-cd /vagrant
+#cd /vagrant
 sudo pip install -U tox
 sudo python setup.py install
 # Install Prosody XMPP server
 sudo apt-get install prosody -y
 # Place config
-sudo cp /vagrant/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+sudo cp prosody.cfg.lua /etc/prosody/prosody.cfg.lua
 
 sudo /etc/init.d/prosody restart
 
