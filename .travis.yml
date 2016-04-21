@@ -10,7 +10,7 @@ env:
   - TOXENV=pypy
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: sudo ./provisioning.sh
+install: sudo bash provisioning.sh
 
 # command to run tests, e.g. python setup.py test
 script: tox
