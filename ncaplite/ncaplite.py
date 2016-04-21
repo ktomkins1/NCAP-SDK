@@ -17,6 +17,7 @@
 
 from urllib import urlopen
 import xml.etree.ElementTree as ET
+import thread
 
 class NCAP(object):
     """ This class defines an NCAP instance.
@@ -71,29 +72,24 @@ class NCAP(object):
     def start(self):
         print("NCAP Started")
         self.network_interface.run()
-    
+
 
     def stop(self):
         print("NCAP Stoped")
         self.network_interface.disconnect()
 
 
-    def  on_network_if_message(self, msg):
+    def on_network_if_message(self, msg):
         """
         Callback for network interface message
         :return:
         """
-
         if msg['type'] in ('chat', 'normal'):
-            print("Got normal chat msg: "+str(msg))
-            request = self.parse_message(msg)
-            print("Request :" + str(request))
-            if request['functionId']=='7108':
-                print('Recieved a 7108 message')
-                print(msg['from'])
-                self.discovery_service.ncap_client_join(msg['from'])
-
-
+            if self.type == "server":
+                print("Server got normal chat msg: "+str(msg))
+                self.handle_message(msg)
+            else:
+                print("Client got normal chat msg: "+str(msg))
         else:
             print("Got unknown message type: "+str(msg))
 
@@ -102,14 +98,13 @@ class NCAP(object):
         Callback for start of new session on the network interface
         :return:
         """
-
-
-        announce="Network Session Start."
+        announce = "Network Session Start."
         self.network_interface.send_presence()
         self.network_interface.get_roster()
         print(announce)
 
     def register_discovery_service(self, discovery):
+        print('Registered Discover Service')
         self.discovery_service = discovery
 
     def parse_message(self, msg):
@@ -118,7 +113,29 @@ class NCAP(object):
         functionId = parse[0]
         print functionId
         if functionId == '7108' or functionId == '7109':
-            return {'functionId':functionId}
+            return {'functionId': functionId}
 
-    def init_message_handler(self):
-        self.msg_handlers={"7108", self.discovery_service.ncap_client_join}
+    def handle_message(self, msg):
+        request = self.parse_message(msg)
+        print("Request :" + str(request))
+        if request['functionId'] == '7108':
+            print('Recieved a 7108 message')
+            print(msg['from'])
+            thread.start_new_thread(self.Thread7108,
+                                    (tuple(request.items()),
+                                        ('from', msg['from']))
+                                    )
+
+    def Thread7108(self, request, sender_info):
+        print("Thread7108")
+        MSG = dict(map(None, request))
+        on_roster = self.discovery_service.ncap_client_join(sender_info[1])
+        response = MSG['functionId'] + ',' + str(on_roster)
+        self.network_interface.send_message(mto=str(sender_info[1]), mbody=response, mtype='chat')
+
+    def Thread7109(self, request, sender_info):
+        print("Thread7109")
+    	MSG = dict(map(None, request))
+    	on_roster = self.discovery_service.ncap_client_unjoin(sender_info[1])
+    	response = MSG['functionId'] + ',' + str(on_roster)
+    	self.network_interface.send_message(mto=str(sender_info[1]), mbody=response, mtype='chat')
