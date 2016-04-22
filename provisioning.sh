@@ -14,7 +14,7 @@ echo "Setting up Python..."
 # Set up python
 sudo apt-get install python-dev python-pip -q -y
 #cd /vagrant
-sudo pip install tox
+pip install tox
 python setup.py install
 
 echo "Setting up Prosody..."
