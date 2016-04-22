@@ -15,7 +15,7 @@ echo "Setting up Python..."
 sudo apt-get install python-dev python-pip -q -y
 #cd /vagrant
 sudo pip install tox
-sudo python setup.py install
+python setup.py install
 
 echo "Setting up Prosody..."
 # Install Prosody XMPP server
