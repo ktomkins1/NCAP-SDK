@@ -31,16 +31,17 @@ class TimDiscoveryMock(TimDiscoveryBase):
 
 class TransducerAccessMock(TransducerAccessBase):
 
-    def open(self, tim_id, channel_id, trans_comm_id):
-        return
+    def open(self, tim_id, channel_id):
+        trans_comm_id = 0
+        return trans_comm_id
 
-    def open_qo_s(self, tim_id, channel_id, qos_params, trans_comm_id):
+    def open_qos(self, tim_id, channel_id, qos_params, trans_comm_id):
         return
 
     def open_group(self, tim_ids, channel_ids, trans_comm_id):
         return
 
-    def open_group_qo_s(self, tim_ids, channel_ids, qos_params, trans_comm_id):
+    def open_group_qos(self, tim_ids, channel_ids, qos_params, trans_comm_id):
         return
 
     def close(self, trans_comm_id):

@@ -22,35 +22,35 @@ class TimDiscoveryBase(object):
 
     @abc.abstractmethod
     def report_comm_module(self, module_ids):
-
         return
 
     @abc.abstractmethod
     def report_tims(self, module_id, tim_ids):
-
         return
 
     @abc.abstractmethod
     def report_channels(self, tim_id, channel_ids, names):
-
         return
 
 
 class TransducerAccessBase(object):
     """
-    The TransducerAccess interface is provided by the IEEE 1451.0 layer and is called by the application to
-    provide access to TransducerChannels. For most applications, they will primarily be interacting with this interface
-    to perform TIM read and write operations. To keep this interface small, more advanced methods are placed in the
-    TransducerManager interface. Each method is listed in Table 85.
+    The TransducerAccess interface is provided by the IEEE 1451.0 layer and is
+    called by the application to provide access to TransducerChannels.
+    For most applications, they will primarily be interacting with this
+    interface to perform TIM read and write operations. To keep this interface
+    small, more advanced methods are placed in the TransducerManager interface.
+    Each method is listed in Table 85.
     """
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def open(self, tim_id, channel_id, trans_comm_id):
-        return
+    def open(self, tim_id, channel_id):
+        trans_comm_id = 0
+        return trans_comm_id
 
     @abc.abstractmethod
-    def open_qo_s(self, tim_id, channel_id, qos_params, trans_comm_id):
+    def open_qos(self, tim_id, channel_id, qos_params, trans_comm_id):
         return
 
     @abc.abstractmethod
@@ -58,7 +58,7 @@ class TransducerAccessBase(object):
         return
 
     @abc.abstractmethod
-    def open_group_qo_s(self, tim_ids, channel_ids, qos_params, trans_comm_id):
+    def open_group_qos(self, tim_ids, channel_ids, qos_params, trans_comm_id):
         return
 
     @abc.abstractmethod
@@ -74,11 +74,13 @@ class TransducerAccessBase(object):
         return
 
     @abc.abstractmethod
-    def start_read_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, callback, operation_id):
+    def start_read_data(self, trans_comm_id, trigger_time, timeout,
+                        sampling_mode, callback, operation_id):
         return
 
     @abc.abstractmethod
-    def start_write_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, value, callback, operation_id):
+    def start_write_data(self, trans_comm_id, trigger_time, timeout,
+                         sampling_mode, value, callback, operation_id):
         return
 
     @abc.abstractmethod
@@ -113,12 +115,13 @@ class TransducerManagerBase(object):
         return
 
     @abc.abstractmethod
-    def send_command(self, trans_comm_id, timeout, cmd_class_id, cmd_function_id, args, out_args):
+    def send_command(self, trans_comm_id, timeout, cmd_class_id,
+                     cmd_function_id, args, out_args):
         return
 
     @abc.abstractmethod
-    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id, cmd_function_id,
-                      args, callback, operation_id):
+    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id,
+                      cmd_function_id, args, callback, operation_id):
         return
 
     @abc.abstractmethod
@@ -130,7 +133,8 @@ class TransducerManagerBase(object):
         return
 
     @abc.abstractmethod
-    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode, app_callbackcallback, operation_id):
+    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode,
+                      app_callbackcallback, operation_id):
         return
 
     @abc.abstractmethod
@@ -138,7 +142,8 @@ class TransducerManagerBase(object):
         return
 
     @abc.abstractmethod
-    def register_status_change(self, trans_comm_id, timeout, callback, operation_id):
+    def register_status_change(self, trans_comm_id, timeout, callback,
+                               operation_id):
         return
 
     @abc.abstractmethod
@@ -180,7 +185,8 @@ class CommManagerBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def get_comm_module(self, module_id, comm_object, comm_type, technology_id):
+    def get_comm_module(self, module_id, comm_object, comm_type,
+                        technology_id):
         return
 
 
