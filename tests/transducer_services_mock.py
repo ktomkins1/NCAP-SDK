@@ -53,10 +53,12 @@ class TransducerAccessMock(TransducerAccessBase):
     def write_data(self, trans_comm_id, timeout, sampling_mode, value):
         return
 
-    def start_read_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, callback, operation_id):
+    def start_read_data(self, trans_comm_id, trigger_time, timeout,
+                        sampling_mode, callback, operation_id):
         return
 
-    def start_write_data(self, trans_comm_id, trigger_time, timeout, sampling_mode, value, callback, operation_id):
+    def start_write_data(self, trans_comm_id, trigger_time, timeout,
+                         sampling_mode, value, callback, operation_id):
         return
 
     def start_stream(self, trans_comm_id, callback, operation_id):
@@ -80,11 +82,12 @@ class TransducerManagerMock(TransducerManagerBase):
     def break_lock(self, trans_comm_id):
         return
 
-    def send_command(self, trans_comm_id, timeout, cmd_class_id, cmd_function_id, args, out_args):
+    def send_command(self, trans_comm_id, timeout, cmd_class_id,
+                     cmd_function_id, args, out_args):
         return
 
-    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id, cmd_function_id, args, callback,
-                      operation_id):
+    def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id,
+                      cmd_function_id, args, callback, operation_id):
         return
 
     def trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode):
@@ -93,13 +96,15 @@ class TransducerManagerMock(TransducerManagerBase):
     def configure_attributes(self, trans_comm_id, attribute_names):
         return
 
-    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode, app_callbackcallback, operation_id):
+    def start_trigger(self, trans_comm_id, trigger_time, timeout, samplg_mode,
+                      app_callbackcallback, operation_id):
         return
 
     def clear(self, trans_comm_id, timeout, clear_mode):
         return
 
-    def register_status_change(self, trans_comm_id, timeout, callback, operation_id):
+    def register_status_change(self, trans_comm_id, timeout, callback,
+                               operation_id):
         return
 
     def unregister_status_change(self, trans_comm_id):
@@ -126,7 +131,8 @@ class TedsManagerMock(TedsManagerBase):
 
 class CommManagerMock(CommManagerBase):
 
-    def get_comm_module(self, module_id, comm_object, comm_type, technology_id):
+    def get_comm_module(self, module_id, comm_object, comm_type,
+                        technology_id):
         return
 
 
@@ -151,14 +157,17 @@ class ApiCallbackMock(ApiCallbackBase):
 if __name__ == '__main__':
     print('Subclass:', issubclass(TimDiscoveryMock, TimDiscoveryBase))
     print('Subclass:', issubclass(TransducerAccessMock, TransducerAccessBase))
-    print('Subclass:', issubclass(TransducerManagerMock, TransducerManagerBase))
+    print('Subclass:', issubclass(TransducerManagerMock,
+                                  TransducerManagerBase))
     print('Subclass:', issubclass(TedsManagerMock, TedsManagerBase))
-    print( 'Subclass:', issubclass(CommManagerMock, CommManagerBase))
-    print( 'Subclass:', issubclass(ApiCallbackMock, ApiCallbackBase))
+    print('Subclass:', issubclass(CommManagerMock, CommManagerBase))
+    print('Subclass:', issubclass(ApiCallbackMock, ApiCallbackBase))
 
-    print( 'Instance:', isinstance(TimDiscoveryMock(), TimDiscoveryBase))
-    print( 'Instance:', isinstance(TransducerAccessMock(), TransducerAccessBase))
-    print( 'Instance:', isinstance(TransducerManagerMock(), TransducerManagerBase))
-    print( 'Instance:', isinstance(TedsManagerMock(), TedsManagerBase))
-    print( 'Instance:', isinstance(CommManagerMock(), CommManagerBase))
-    print( 'Instance:', isinstance(ApiCallbackMock(), ApiCallbackBase))
+    print('Instance:', isinstance(TimDiscoveryMock(), TimDiscoveryBase))
+    print('Instance:', isinstance(TransducerAccessMock(),
+                                  TransducerAccessBase))
+    print('Instance:', isinstance(TransducerManagerMock(),
+                                  TransducerManagerBase))
+    print('Instance:', isinstance(TedsManagerMock(), TedsManagerBase))
+    print('Instance:', isinstance(CommManagerMock(), CommManagerBase))
+    print('Instance:', isinstance(ApiCallbackMock(), ApiCallbackBase))

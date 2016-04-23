@@ -19,11 +19,11 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'sleekxmpp', 'dnspython', 'pyasn1', 'pyasn1-modules'
+    'sleekxmpp', 'dnspython', 'pyasn1', 'pyasn1-modules', 'enum34'
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'mock'
 ]
 
 setup(

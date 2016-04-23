@@ -1,8 +1,8 @@
 """
 .. module:: transducer_services_base
    :platform: Unix, Windows
-   :synopsis: Defines the abstract base class for IEEE1451.0 Transducer Services for
-   ncaplite.
+   :synopsis: Defines the abstract base class for IEEE1451.0 Transducer Services
+    for ncaplite.
 
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
@@ -46,6 +46,19 @@ class TransducerAccessBase(object):
 
     @abc.abstractmethod
     def open(self, tim_id, channel_id):
+        """
+        This method opens a communication link to the desired TIM and Channel
+        and returns a "trans_comm_id" that will be used in subsequent calls.
+        The default QoS will be used.
+
+        Args:
+            tim_id: ID of the desired TIM
+            channel_id: the desired transducer channel
+        Returns:
+            The transport communications id. This acts as the handle for
+            the current comms session with the TIM and Channel. This handle
+            will be used in subsequent method calls to TransducerAccess
+        """
         trans_comm_id = 0
         return trans_comm_id
 
