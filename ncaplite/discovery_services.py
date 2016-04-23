@@ -1,5 +1,5 @@
 """
-.. module:: transducer_services_mock
+.. module:: discovery_services
    :platform: Unix, Windows
    :synopsis: Defines Discovery Services for ncaplite.
 
@@ -72,7 +72,7 @@ class DiscoveryServices(object):
         returns FALSE for unregistered, TRUE for registered.
         """
         print("ncap_client_unjoin: "+str(client_id))
-        on_roster=0
+        on_roster = 0
         # with open(self.roster_path, 'r') as f:
         #     tree = ET.parse(f)
 
