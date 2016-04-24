@@ -73,11 +73,8 @@ Identifies the sequence no.
 1 Byte
 ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼Priority
 1 Byte
-Gives node carrying out operation the importance of said operation to allow for overrides of more important functions
+Gives node carrying out operation the importance of said operation to allow for
+overrides of more important functions
 ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼
 
 """
-
-#class Units{
-#
-#}

@@ -14,10 +14,9 @@
 # throughout SleekXMPP, we will set the default encoding
 # ourselves to UTF-8.
 
-
-from urllib import urlopen
 import xml.etree.ElementTree as ET
 import thread
+
 
 class NCAP(object):
     """ This class defines an NCAP instance.
@@ -33,51 +32,52 @@ class NCAP(object):
         :param ncap_config: NCAP configuration file path
         :return:
         """
-        self.id=id #EUI64
+        self.id = id  # EUI64
         self.type = "server"
         self.name = "mr. ncap"
-        self.model_number=0
-        self.serial_number=0
-        self.manufacturer_id=0
-        self.physical_address=0
-        self.protocol_address=0
-        self.client_list={}
-        self.server_list={}
-        self.server_client_join_list={}
+        self.model_number = 0
+        self.serial_number = 0
+        self.manufacturer_id = 0
+        self.physical_address = 0
+        self.protocol_address = 0
+        self.client_list = {}
+        self.server_list = {}
+        self.server_client_join_list = {}
         self.roster_file_path = 'roster.xml'
-        self.msg_handlers={}
-
+        self.msg_handlers = {}
 
     def load_config(self, config_file_path='ncapconfig.xml'):
 
         tree = ET.parse(config_file_path)
         root = tree.getroot()
-        self.roster_file_path=root.find('roster_path').text
-        self.broker_ip=root.find('broker_address').find('address').text
-        self.broker_port=int(root.find('broker_address').find('port').text)
-        self.jid=root.find('ncap_identification').find('jid').text
-        self.password=root.find('ncap_identification').find('password').text
-        self.id=int(root.find('ncap_identification').find('ncap_id').text)
-        self.type=root.find('ncap_identification').find('ncap_type').text
-        self.model_number=int(root.find('ncap_identification').find('model_number').text)
-        self.serial_number=int(root.find('ncap_identification').find('serial_number').text)
-        self.manufacturer_id=int(root.find('ncap_identification').find('manufacturer_id').text)
+        self.roster_file_path = root.find('roster_path').text
+        self.broker_ip = root.find('broker_address').find('address').text
+        self.broker_port = int(root.find('broker_address').find('port').text)
+        self.jid = root.find('ncap_identification').find('jid').text
+        self.password = root.find('ncap_identification').find('password').text
+        self.id = int(root.find('ncap_identification').find('ncap_id').text)
+        self.type = root.find('ncap_identification').find('ncap_type').text
+        self.model_number = int(root.find('ncap_identification').
+                                find('model_number').text)
+        self.serial_number = int(root.find('ncap_identification').
+                                 find('serial_number').text)
+        self.manufacturer_id = int(root.find('ncap_identification').
+                                   find('manufacturer_id').text)
 
-    def register_network_interface(self,network_interface):
+    def register_network_interface(self, network_interface):
         self.network_interface = network_interface
-        self.network_interface.add_event_handler("session_start", self.on_network_if_session_start)
-        self.network_interface.add_event_handler("message", self.on_network_if_message)
-
+        self.network_interface.add_event_handler(
+                            "session_start", self.on_network_if_session_start)
+        self.network_interface.add_event_handler(
+                                        "message", self.on_network_if_message)
 
     def start(self):
         print("NCAP Started")
         self.network_interface.run()
 
-
     def stop(self):
         print("NCAP Stoped")
         self.network_interface.disconnect()
-
 
     def on_network_if_message(self, msg):
         """
@@ -131,11 +131,13 @@ class NCAP(object):
         MSG = dict(map(None, request))
         on_roster = self.discovery_service.ncap_client_join(sender_info[1])
         response = MSG['functionId'] + ',' + str(on_roster)
-        self.network_interface.send_message(mto=str(sender_info[1]), mbody=response, mtype='chat')
+        self.network_interface.send_message(
+                        mto=str(sender_info[1]), mbody=response, mtype='chat')
 
     def Thread7109(self, request, sender_info):
         print("Thread7109")
-    	MSG = dict(map(None, request))
-    	on_roster = self.discovery_service.ncap_client_unjoin(sender_info[1])
-    	response = MSG['functionId'] + ',' + str(on_roster)
-    	self.network_interface.send_message(mto=str(sender_info[1]), mbody=response, mtype='chat')
+        MSG = dict(map(None, request))
+        on_roster = self.discovery_service.ncap_client_unjoin(sender_info[1])
+        response = MSG['functionId'] + ',' + str(on_roster)
+        self.network_interface.send_message(
+                        mto=str(sender_info[1]), mbody=response, mtype='chat')

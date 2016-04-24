@@ -13,6 +13,7 @@ import mock
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
 
+
 class TestTransducerDataAccessServices(unittest.TestCase):
     """This class defines the test runner for Discovery Services"""
     def setUp(self):
@@ -22,9 +23,6 @@ class TestTransducerDataAccessServices(unittest.TestCase):
     def tearDown(self):
         """Teardown for unit tests"""
         pass
-
-    def test_foo(self):
-        print("bar")
 
     def test_read_transducer_sample_data_from_a_channel_of_a_tim(self):
         """Test reading transducer sample from channel of a tim """

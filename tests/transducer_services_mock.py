@@ -8,7 +8,7 @@
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
 """
-import abc
+
 from ncaplite.transducer_services_base import TimDiscoveryBase
 from ncaplite.transducer_services_base import TransducerAccessBase
 from ncaplite.transducer_services_base import TransducerManagerBase

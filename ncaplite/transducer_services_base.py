@@ -1,8 +1,8 @@
 """
 .. module:: transducer_services_base
    :platform: Unix, Windows
-   :synopsis: Defines the abstract base class for IEEE1451.0 Transducer Services
-    for ncaplite.
+   :synopsis: Defines the abstract base class for IEEE1451.0
+   Transducer Services for ncaplite.
 
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
