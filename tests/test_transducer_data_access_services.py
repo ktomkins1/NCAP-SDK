@@ -11,7 +11,7 @@ Tests for `transducer_data_access_services` module.
 import unittest
 import mock
 from ncaplite import transducer_data_access_services
-from tests import transducer_services_mock
+from ncaplite import transducer_services_base
 
 class TestTransducerDataAccessServices(unittest.TestCase):
     """This class defines the test runner for Discovery Services"""
@@ -38,7 +38,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                            sampling_mode, result):
             result.append(1024)
 
-        tdaccs = mock.Mock(spec=transducer_services_mock.TransducerAccessMock)
+        tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
         tdaccs.read_data.side_effect = read_data_mock
 
