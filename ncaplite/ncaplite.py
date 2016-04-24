@@ -119,9 +119,12 @@ class NCAP(object):
         request = self.parse_message(msg)
         print("Request :" + str(request))
         if request['functionId'] == '7108':
-            print('Recieved a 7108 message')
-            print(msg['from'])
             thread.start_new_thread(self.Thread7108,
+                                    (tuple(request.items()),
+                                        ('from', msg['from']))
+                                    )
+        if request['functionId'] == '7109':
+            thread.start_new_thread(self.Thread7109,
                                     (tuple(request.items()),
                                         ('from', msg['from']))
                                     )
