@@ -124,7 +124,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.stop()
 
     def test_client_join_unjoin(self):
-        """ Check we can spawn a thread the allows us to join the roster
+        """ Check we can spawn a thread the allows us to join/unjoin the roster
         based on a client request. """
         roster_path = 'tests/testroster.xml'
         ncap = ncaplite.NCAP(12345)
@@ -145,45 +145,32 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        msg = '7108'
-        ncap_client.network_interface.send_message(
+        msgs = ['7108', '7109']
+        expected_roster_status = [1, 0]
+        actual_roster_status = []
+
+        for msg in msgs:
+            ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
-        time.sleep(3)
 
-        root = ncap.discovery_service.tree.getroot()
+            time.sleep(1)
 
-        jids = []
+            # check the roster, but ignore the resource identifier for this
+            root = ncap.discovery_service.tree.getroot()
+            jids = []
 
-        # check the roster, but ignore the resource identifier for the check
-        for user in root.findall('user'):
-            jids.append(user.find('jid').text.split('/')[0])
+            for user in root.findall('user'):
+                jids.append(user.find('jid').text.split('/')[0])
 
-        if(client_jid in jids):
-            join_ok = 1
-        else:
-            join_ok = 0
-
-        msg = '7109'
-        ncap_client.network_interface.send_message(
-                                        mto=ncap.jid, mbody=msg, mtype='chat')
-        time.sleep(3)
-
-        # check the roster, but ignore the resource identifier for the check
-        root = ncap.discovery_service.tree.getroot()
-        jids = []
-        for user in root.findall('user'):
-            jids.append(user.find('jid').text.split('/')[0])
-
-        if(client_jid in jids):
-            unjoin_ok = 0
-        else:
-            unjoin_ok = 1
+            if(client_jid in jids):
+                actual_roster_status.append(1)
+            else:
+                actual_roster_status.append(0)
 
         ncap_client.stop()
         ncap.stop()
 
-        assert(join_ok == 1)
-        assert(unjoin_ok == 1)
+        self.assertListEqual(expected_roster_status, actual_roster_status)
 
 
 if __name__ == '__main__':
