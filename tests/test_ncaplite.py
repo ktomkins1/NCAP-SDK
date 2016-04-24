@@ -123,7 +123,7 @@ class TestNcaplite(unittest.TestCase):
         time.sleep(1)
         ncap.stop()
 
-    def test_client_join(self):
+    def test_client_join_unjoin(self):
         """ Check we can spawn a thread the allows us to join the roster
         based on a client request. """
         roster_path = 'tests/testroster.xml'
@@ -154,20 +154,36 @@ class TestNcaplite(unittest.TestCase):
 
         jids = []
 
-        #check the roster, but ignore the resource identifier for the check
+        # check the roster, but ignore the resource identifier for the check
         for user in root.findall('user'):
             jids.append(user.find('jid').text.split('/')[0])
 
         if(client_jid in jids):
-            on_roster = 1
+            join_ok = 1
         else:
-            on_roster = 0
+            join_ok = 0
+
+        msg = '7109'
+        ncap_client.network_interface.send_message(
+                                        mto=ncap.jid, mbody=msg, mtype='chat')
+        time.sleep(3)
+
+        # check the roster, but ignore the resource identifier for the check
+        root = ncap.discovery_service.tree.getroot()
+        jids = []
+        for user in root.findall('user'):
+            jids.append(user.find('jid').text.split('/')[0])
+
+        if(client_jid in jids):
+            unjoin_ok = 0
+        else:
+            unjoin_ok = 1
 
         ncap_client.stop()
         ncap.stop()
 
-        assert(on_roster == 1)
-
+        assert(join_ok == 1)
+        assert(unjoin_ok == 1)
 
 
 if __name__ == '__main__':
