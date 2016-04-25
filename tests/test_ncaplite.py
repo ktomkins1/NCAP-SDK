@@ -178,7 +178,7 @@ class TestNcaplite(unittest.TestCase):
 
     def test_client_can_read_sample_data(self):
         """ Test that a client can read a Sample from
-        a channel of a TIM"""
+        a channel of a TIM """
 
         def tryeval(val):
             try:
@@ -196,15 +196,8 @@ class TestNcaplite(unittest.TestCase):
             result.append(1024)
 
         def client_on_data(msg):
-            print("MBOD: " + str(msg['body']))
-            mb = ast.literal_eval(msg['body'])
-            print("MB:" + str(mb))
-            print("type:" + str(type(mb)))
-            lmb = list(mb)
-            print("LMB "+str(lmb))
-            mbe = [tryeval(i) for i in lmb]
-            print("MBE " + str(mbe))
-            self.actual_response = tuple(mbe)
+            resp = network_interface.NetworkClient.parse_inbound(msg)
+            self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -247,8 +240,8 @@ class TestNcaplite(unittest.TestCase):
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
             time.sleep(1)
-            print("actual: "+str(self.actual_response))
-            print("expected:"+str(expected_response))
+            print("actual: " + str(self.actual_response))
+            print("expected:" + str(expected_response))
 
         ncap_client.stop()
         ncap.stop()
