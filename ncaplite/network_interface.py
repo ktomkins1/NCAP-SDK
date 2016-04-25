@@ -63,10 +63,14 @@ class NetworkClient(sleekxmpp.ClientXMPP):
     def parse_inbound(msg):
         """ Parse an inbound message from the network interface
         into a tuple of arguments for an IEEE1457-1 function """
-        mb = ast.literal_eval(msg)
-        lmb = list(mb)
-        mbe = [NetworkClient.tryeval(i) for i in lmb]
-        return tuple(mbe)
+        ml = msg.split(",")
+        for n, i in enumerate(ml):
+            if(';' in i):
+                y = i.split(';')
+                ml[n] = [NetworkClient.tryeval(i) for i in y]
+            else:
+                ml[n] = NetworkClient.tryeval(i)
+        return(tuple(ml))
 
     @staticmethod
     def parse_outbound(msg):

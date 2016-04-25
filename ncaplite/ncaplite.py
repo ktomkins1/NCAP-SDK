@@ -175,7 +175,6 @@ class NCAP(object):
                                                         MSG['channel_id'],
                                                         MSG['timeout'],
                                                         MSG['sampling_mode'])
-        msg = str(response)
-        print("msg: " + msg)
+        msg = '7211,'+self.network_interface.parse_outbound(response)
         self.network_interface.send_message(
                         mto=str(sender_info[1]), mbody=msg, mtype='chat')

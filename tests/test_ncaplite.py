@@ -180,13 +180,6 @@ class TestNcaplite(unittest.TestCase):
         """ Test that a client can read a Sample from
         a channel of a TIM """
 
-        def tryeval(val):
-            try:
-                val = ast.literal_eval(val)
-            except ValueError:
-                pass
-            return val
-
         def open_mock(tim_id, channel_id):
             trans_comm_id = 1
             return trans_comm_id
@@ -197,6 +190,7 @@ class TestNcaplite(unittest.TestCase):
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
+            print("RESP: " + str(resp))
             self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
@@ -233,7 +227,7 @@ class TestNcaplite(unittest.TestCase):
         time.sleep(1)
 
         msgs = ['7211,1234,1,2,100,0']
-        expected_response = (0, 1234, 1, 2, [1024])
+        expected_response = (7211, 0, 1234, 1, 2, 1024)
 
         for msg in msgs:
             ncap_client.network_interface.send_message(

@@ -15,7 +15,6 @@ import unittest
 
 
 from ncaplite import network_interface
-import xml.etree.ElementTree as ET
 import os
 
 
@@ -44,7 +43,6 @@ class TestNetworkInterface(unittest.TestCase):
                                                                     test_msg)
         self.assertEqual(expected_output, actual_output)
 
-
     def test_parse_inbound_simple_request(self):
         """ Test inbound message parsing of simple requests """
 
@@ -55,11 +53,11 @@ class TestNetworkInterface(unittest.TestCase):
 
         self.assertEqual(expected_output, actual_output)
 
-    # def test_parse_inbound_request_with_list(self):
-    #     """ Test inbound message parsing of requests with lists """
-    #     test_msg = "1,2,3,4;5;6,7"
-    #     expected_output = (1,2,3,[4,5,6],7)
-    #     actual_output = network_interface.NetworkClient.parse_inbound(
-    #                                                                 test_msg)
-    #
-    #     self.assertEqual(expected_output, actual_output)
+    def test_parse_inbound_request_with_list(self):
+        """ Test inbound message parsing of requests with lists """
+        test_msg = "1,2,3,4;5;6,7"
+        expected_output = (1, 2, 3, [4, 5, 6], 7)
+        actual_output = network_interface.NetworkClient.parse_inbound(
+                                                                    test_msg)
+
+        self.assertEqual(expected_output, actual_output)
