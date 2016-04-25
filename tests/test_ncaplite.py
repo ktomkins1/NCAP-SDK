@@ -196,7 +196,7 @@ class TestNcaplite(unittest.TestCase):
             result.append(1024)
 
         def client_on_data(msg):
-            resp = network_interface.NetworkClient.parse_inbound(msg)
+            resp = network_interface.NetworkClient.parse_inbound(msg['body'])
             self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
