@@ -52,7 +52,9 @@ If automatic discovery doesn't work you can use the following workaround.
 you must specify the server IP address in the Advanced options for the Spark client.
 The default configuration for the Vagrant box is an IP of:
 
-``` 10.10.100.4```
+```
+10.10.100.4
+```
 
 Of course, you'll also have to specify this host address as an argument
 when you run the NCAP.
