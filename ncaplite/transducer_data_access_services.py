@@ -40,5 +40,4 @@ class TransducerDataAccessServices(object):
         self.transducer_access.close(trans_comm_id)
         error_code = 0
 
-        return {'error_code': error_code, 'ncap_id': ncap_id, "tim_id": tim_id,
-                'channel_id': channel_id, 'data': data}
+        return (error_code, ncap_id, tim_id, channel_id, data)

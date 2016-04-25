@@ -25,7 +25,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         pass
 
     def test_read_transducer_sample_data_from_a_channel_of_a_tim(self):
-        """Test reading transducer sample from channel of a tim """
+        """ Test reading transducer sample from channel of a tim """
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
@@ -51,6 +51,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'sampling_mode': 0
                 }
 
+        expected_response = (0, 1234, 1, 1, [1024])
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
                                                     request['ncap_id'],
                                                     request['tim_id'],
@@ -61,4 +62,4 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         tdaccs.open.assert_called_with(01, 01)
         tdaccs.read_data.assert_called_with(1, 100, 0, mock.ANY)
-        self.assertEqual(1024, response['data'][0])
+        self.assertEqual(expected_response, response)
