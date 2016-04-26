@@ -111,70 +111,40 @@ class NCAP(object):
         self.network_interface.get_roster()
         print(announce)
 
-    def parse_message(self, msg):
-        mb = str(msg['body'])
-        parse = mb.split(",")
-        functionId = parse[0]
-        if functionId == '7108' or functionId == '7109':
-            return {'function_id': functionId}
-        if functionId == '7211':
-            ncap_id = parse[1]
-            tim_id = parse[2]
-            channel_id = parse[3]
-            timeout = parse[4]
-            sampling_mode = parse[5]
-            return {'function_id': functionId,
-                    'ncap_id': ncap_id,
-                    'tim_id': tim_id,
-                    'channel_id': channel_id,
-                    'timeout': timeout,
-                    'sampling_mode': sampling_mode}
-
     def handle_message(self, msg):
-        request = self.parse_message(msg)
+        sender = ('from', msg['from'])
+        request = self.network_interface.parse_inbound(msg['body'])
         print("Request :" + str(request))
-        if request['function_id'] == '7108':
+        if str(request[0]) == '7108':
             thread.start_new_thread(self.Thread7108,
-                                    (tuple(request.items()),
-                                        ('from', msg['from']))
-                                    )
-        if request['function_id'] == '7109':
+                                    (request, sender))
+        if str(request[0]) == '7109':
             thread.start_new_thread(self.Thread7109,
-                                    (tuple(request.items()),
-                                        ('from', msg['from']))
-                                    )
-        if request['function_id'] == '7211':
+                                    (request, sender))
+        if str(request[0]) == '7211':
             thread.start_new_thread(self.Thread7211,
-                                    (tuple(request.items()),
-                                        ('from', msg['from']))
-                                    )
+                                    (request, sender))
 
     def Thread7108(self, request, sender_info):
         print("Thread7108")
-        MSG = dict(map(None, request))
         on_roster = self.discovery_service.ncap_client_join(sender_info[1])
-        response = MSG['function_id'] + ',' + str(on_roster)
+        response = str(request[0]) + ',' + str(on_roster)
         self.network_interface.send_message(
                         mto=str(sender_info[1]), mbody=response, mtype='chat')
 
     def Thread7109(self, request, sender_info):
         print("Thread7109")
-        MSG = dict(map(None, request))
         on_roster = self.discovery_service.ncap_client_unjoin(sender_info[1])
-        response = MSG['function_id'] + ',' + str(on_roster)
+        response = str(request[0]) + ',' + str(on_roster)
         self.network_interface.send_message(
                         mto=str(sender_info[1]), mbody=response, mtype='chat')
 
     def Thread7211(self, request, sender_info):
         print("Thread7211")
-        MSG = dict(map(None, request))
         response = self.transducer_access.\
-            read_transducer_sample_data_from_a_channel_of_a_tim(
-                                                        MSG['ncap_id'],
-                                                        MSG['tim_id'],
-                                                        MSG['channel_id'],
-                                                        MSG['timeout'],
-                                                        MSG['sampling_mode'])
-        msg = '7211,'+self.network_interface.parse_outbound(response)
+            read_transducer_sample_data_from_a_channel_of_a_tim(*request[1:])
+        msg = str(request[0]) + \
+            ',' + self.network_interface.parse_outbound(response)
+
         self.network_interface.send_message(
                         mto=str(sender_info[1]), mbody=msg, mtype='chat')
