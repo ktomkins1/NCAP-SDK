@@ -44,7 +44,7 @@ class NCAP(object):
         self.server_list = {}
         self.server_client_join_list = {}
         self.roster_file_path = 'roster.xml'
-        self.msg_handlers = {}
+        self.message_handlers = {}
 
     def load_config(self, config_file_path='ncapconfig.xml'):
 
@@ -75,9 +75,13 @@ class NCAP(object):
         print('Registered Discover Service')
         self.discovery_service = discovery
 
+        self.message_handlers[7108] = self.Thread7108
+        self.message_handlers[7109] = self.Thread7109
+
     def register_transducer_data_access_service(self, transducer_access):
         print('Registered Transducer Data Access Service')
         self.transducer_access = transducer_access
+        self.message_handlers[7211] = self.Thread7211
 
     def start(self):
         print("NCAP Started")
@@ -112,18 +116,17 @@ class NCAP(object):
         print(announce)
 
     def handle_message(self, msg):
+        """
+        Dispatcher for handling messages
+
+        Args:
+            msg: a message passed down from the NetworkClient
+        """
         sender = ('from', msg['from'])
         request = self.network_interface.parse_inbound(msg['body'])
         print("Request :" + str(request))
-        if str(request[0]) == '7108':
-            thread.start_new_thread(self.Thread7108,
-                                    (request, sender))
-        if str(request[0]) == '7109':
-            thread.start_new_thread(self.Thread7109,
-                                    (request, sender))
-        if str(request[0]) == '7211':
-            thread.start_new_thread(self.Thread7211,
-                                    (request, sender))
+        thread.start_new_thread(self.message_handlers[request[0]],
+                                (request, sender))
 
     def Thread7108(self, request, sender_info):
         print("Thread7108")
