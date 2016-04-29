@@ -241,6 +241,71 @@ class TestNcaplite(unittest.TestCase):
         ncap.stop()
         self.assertEqual(expected_response, self.actual_response)
 
+    def test_client_can_read_block_data(self):
+        """ Test that a client can read a block of sample data from
+        a channel of a TIM """
+
+        self.actual_response = (0, 0, 0)
+        def open_mock(tim_id, channel_id):
+            trans_comm_id = 1
+            return trans_comm_id
+
+        def read_data_mock(trans_comm_id, timeout,
+                           sampling_mode, result):
+            result.append(read_data_mock.count)
+            read_data_mock.count = read_data_mock.count+1
+        read_data_mock.count = 1024
+
+        def client_on_data(msg):
+            resp = network_interface.NetworkClient.parse_inbound(msg['body'])
+            self.actual_response = resp
+
+        tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
+        tdaccs.open.side_effect = open_mock
+        tdaccs.read_data.side_effect = read_data_mock
+
+        tdas = transducer_data_access_services.TransducerDataAccessServices()
+        tdas.register_transducer_access_service(tdaccs)
+
+        roster_path = 'tests/testroster.xml'
+        ncap = ncaplite.NCAP(12345)
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(
+                ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        ncap.register_network_interface(network_if)
+        discovery = discovery_services.DiscoveryServices(roster_path)
+        ncap.register_discovery_service(discovery)
+        ncap.register_transducer_data_access_service(tdas)
+
+        ncap_client = ncaplite.NCAP(67890)
+        ncap_client.type = "client"
+        client_jid = 'unittest@ncaplite.loc'
+        client_password = 'mypassword'
+        client_if = network_interface.NetworkClient(
+            client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+
+        # monkey-patch the data received method
+        ncap_client.on_network_if_message = client_on_data
+
+        ncap_client.register_network_interface(client_if)
+
+        ncap.start()
+        ncap_client.start()
+        time.sleep(1)
+
+        msgs = ['7212,1234,1,2,100,3,1,0']
+        expected_response = (7212, 0, 1234, 1, 2, [1024, 1025, 1026])
+
+        for msg in msgs:
+            ncap_client.network_interface.send_message(
+                                        mto=ncap.jid, mbody=msg, mtype='chat')
+
+            time.sleep(4)
+
+        ncap_client.stop()
+        ncap.stop()
+        self.assertEqual(expected_response, self.actual_response)
+
 if __name__ == '__main__':
     import sys
     sys.exit(unittest.main())

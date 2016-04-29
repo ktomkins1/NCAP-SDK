@@ -82,6 +82,7 @@ class NCAP(object):
         print('Registered Transducer Data Access Service')
         self.transducer_access = transducer_access
         self.message_handlers[7211] = self.Thread7211
+        self.message_handlers[7212] = self.Thread7212
 
     def start(self):
         print("NCAP Started")
@@ -149,5 +150,14 @@ class NCAP(object):
         msg = str(request[0]) + \
             ',' + self.network_interface.parse_outbound(response)
 
+        self.network_interface.send_message(
+                        mto=str(sender_info[1]), mbody=msg, mtype='chat')
+
+    def Thread7212(self, request, sender_info):
+        print("Thread7212")
+        response = self.transducer_access.\
+            read_transducer_block_data_from_a_channel_of_a_tim(*request[1:])
+        msg = str(request[0]) + \
+            ',' + self.network_interface.parse_outbound(response)
         self.network_interface.send_message(
                         mto=str(sender_info[1]), mbody=msg, mtype='chat')

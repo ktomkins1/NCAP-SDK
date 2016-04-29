@@ -92,11 +92,11 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                    'timeout': 100,
                    'number_of_samples': 3,
                    'sample_interval': 1,
-                   'start_time': 0
+                   'start_time': 1
                 }
 
         expected_response = (0, 1234, 1, 2, [1024, 1025, 1026])
-        t_expected = 3
+        t_expected = 4
 
         t_start = time.time()
         response = tdas.read_transducer_block_data_from_a_channel_of_a_tim(
