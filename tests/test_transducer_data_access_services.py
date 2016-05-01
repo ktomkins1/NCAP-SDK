@@ -65,6 +65,55 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         tdaccs.read_data.assert_called_with(1, 100, 0, mock.ANY)
         self.assertEqual(expected_response, response)
 
+    def test_write_transducer_sample_data_to_a_channel_of_a_tim(self):
+        """ Test writing transducer sample data to a channel of a tim """
+
+        # mock version of the TransducerAccess.open function
+        def open_mock(tim_id, channel_id):
+            trans_comm_id = 1
+            return trans_comm_id
+
+        self.result = []
+
+        def write_data_mock(trans_comm_id, timeout,
+                            sampling_mode, value):
+            self.result.append(value)
+
+        tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
+        tdaccs.open.side_effect = open_mock
+        tdaccs.write_data.side_effect = write_data_mock
+
+        tdas = transducer_data_access_services.TransducerDataAccessServices()
+        tdas.register_transducer_access_service(tdaccs)
+
+        request = {
+                'ncap_id': 1234,
+                'tim_id': 01,
+                'channel_id': 01,
+                'timeout': 100,
+                'sampling_mode': 0,
+                }
+
+        expected_response = (0, 1234, 1, 1)
+        expected_output = [1024, 1025, 1026]
+
+        for sample in expected_output:
+            response = tdas.\
+                        write_transducer_sample_data_to_a_channel_of_a_tim(
+                                                    request['ncap_id'],
+                                                    request['tim_id'],
+                                                    request['channel_id'],
+                                                    request['timeout'],
+                                                    request['sampling_mode'],
+                                                    sample
+                                                    )
+
+        print(str(expected_output))
+        tdaccs.open.assert_called_with(01, 01)
+        tdaccs.write_data.assert_called_with(1, 100, 0, mock.ANY)
+        self.assertEqual(expected_response, response)
+        self.assertEqual(expected_output, self.result)
+
     def test_read_transducer_block_data_from_a_channel_of_a_tim(self):
         """ Test reading transducer block data channel of a tim. """
 

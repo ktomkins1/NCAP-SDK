@@ -80,10 +80,32 @@ class TransducerAccessBase(object):
 
     @abc.abstractmethod
     def read_data(self, trans_comm_id, timeout, sampling_mode, result):
+        """
+        This method reads data using the  communication link  specified by
+        the trans_comm_id from the desired TIM and Channel.
+        The default QoS will be used.
+
+        Args:
+            trans_comm_id: the transport communications id
+            timeout: the timeout
+            sampling_mode: the desired sampling_mode
+            result: oputput argument containing the read result
+        """
         return
 
     @abc.abstractmethod
     def write_data(self, trans_comm_id, timeout, sampling_mode, value):
+        """
+        This method writes data using the  communication link  specified by
+        the trans_comm_id from the desired TIM and Channel.
+        The default QoS will be used.
+
+        Args:
+            trans_comm_id: the transport communications id
+            timeout: the timeout
+            sampling_mode: the desired sampling_mode
+            value: the value to send
+        """
         return
 
     @abc.abstractmethod

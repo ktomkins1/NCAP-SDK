@@ -41,6 +41,8 @@ class TransducerDataAccessServices(object):
             ncap_id: ID of the NCAP application being queried
             tim_id: ID of the TIM being queried
             channel_id: the channel ID of the TIM
+            timeout: The timeout interval before reporting a timeout error_code
+            sampling_mode: The sampling mode selection
 
         Returns: A tuple containing the following:
             error_code: an error code
@@ -100,3 +102,34 @@ class TransducerDataAccessServices(object):
             transducer_block_data.append(result[4][0])
             time.sleep(sample_interval)
         return (error_code, ncap_id, tim_id, channel_id, transducer_block_data)
+
+    def write_transducer_sample_data_to_a_channel_of_a_tim(self,
+                                                           ncap_id,
+                                                           tim_id,
+                                                           channel_id,
+                                                           timeout,
+                                                           sampling_mode,
+                                                           sample_data):
+        """ Write transducer sample data to a channel of a TIM.
+
+        Args:
+            ncap_id: ID of the NCAP application being queried
+            tim_id: ID of the TIM being queried
+            channel_id: the channel ID of the TIM
+            timeout: The timeout interval before reporting a timeout error_code
+            sampling_mode: The sampling mode selection
+            sample_data: The sample data to be written.
+
+        Returns:
+            error_code: an error code
+            ncap_id: the ncap id
+            tim_id: the id of the tim that was read
+            channel_id: the id of the channel read from the TIM
+        """
+        trans_comm_id = self.transducer_access.open(tim_id, channel_id)
+        self.transducer_access.write_data(trans_comm_id, timeout,
+                                          sampling_mode, sample_data)
+        self.transducer_access.close(trans_comm_id)
+        error_code = 0
+
+        return (error_code, ncap_id, tim_id, channel_id)
