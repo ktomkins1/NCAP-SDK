@@ -88,5 +88,5 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         x = x.replace("'", "")
         x = x.replace("(", "")
         x = x.replace(")", "")
-        x = "".join(x.split())
+        x = "".join(x.split()).rstrip(',')
         return x
