@@ -75,15 +75,18 @@ class NCAP(object):
         print('Registered Discover Service')
         self.discovery_service = discovery
 
-        self.message_handlers[7108] = self.Thread7108
-        self.message_handlers[7109] = self.Thread7109
+        self.message_handlers[7108] = self.discovery_service.ncap_client_join
+        self.message_handlers[7109] = self.discovery_service.ncap_client_unjoin
 
     def register_transducer_data_access_service(self, transducer_access):
         print('Registered Transducer Data Access Service')
         self.transducer_access = transducer_access
-        self.message_handlers[7211] = self.Thread7211
-        self.message_handlers[7212] = self.Thread7212
-        self.message_handlers[7214] = self.Thread7214
+        self.message_handlers[7211] = self.transducer_access.\
+            read_transducer_sample_data_from_a_channel_of_a_tim
+        self.message_handlers[7212] = self.transducer_access.\
+            read_transducer_block_data_from_a_channel_of_a_tim
+        self.message_handlers[7214] = self.transducer_access.\
+            write_transducer_sample_data_to_a_channel_of_a_tim
 
     def start(self):
         print("NCAP Started")
@@ -126,47 +129,33 @@ class NCAP(object):
         """
         sender = ('from', msg['from'])
         request = self.network_interface.parse_inbound(msg['body'])
+
+        # deal w/ the special case for join/unjoin
+        if request[0] in [7108, 7109]:
+            request = (request[0], sender[1])
+
         print("Request :" + str(request))
-        thread.start_new_thread(self.message_handlers[request[0]],
-                                (request, sender))
+        thread.start_new_thread(self.handler_thread,
+                                (request,
+                                 sender,
+                                 self.message_handlers[request[0]])
+                                )
 
-    def Thread7108(self, request, sender_info):
-        print("Thread7108")
-        on_roster = self.discovery_service.ncap_client_join(sender_info[1])
-        response = str(request[0]) + ',' + str(on_roster)
-        self.network_interface.send_message(
-                        mto=str(sender_info[1]), mbody=response, mtype='chat')
+    def handler_thread(self, request, sender_info, function):
+        """handler_thread generalizes the actions taken by the thread
+        created by the handle_message function. We call the appropriate
+        1451-1 service with the appropriate arguments. Once the service
+        returns a response, we parse the reponse into an outgoing message
+        for the network interface and send a reply to the client.
 
-    def Thread7109(self, request, sender_info):
-        print("Thread7109")
-        on_roster = self.discovery_service.ncap_client_unjoin(sender_info[1])
-        response = str(request[0]) + ',' + str(on_roster)
-        self.network_interface.send_message(
-                        mto=str(sender_info[1]), mbody=response, mtype='chat')
-
-    def Thread7211(self, request, sender_info):
-        print("Thread7211")
-        response = self.transducer_access.\
-            read_transducer_sample_data_from_a_channel_of_a_tim(*request[1:])
-        msg = str(request[0]) + \
-            ',' + self.network_interface.parse_outbound(response)
-
-        self.network_interface.send_message(
-                        mto=str(sender_info[1]), mbody=msg, mtype='chat')
-
-    def Thread7212(self, request, sender_info):
-        print("Thread7212")
-        response = self.transducer_access.\
-            read_transducer_block_data_from_a_channel_of_a_tim(*request[1:])
-        msg = str(request[0]) + \
-            ',' + self.network_interface.parse_outbound(response)
-        self.network_interface.send_message(
-                        mto=str(sender_info[1]), mbody=msg, mtype='chat')
-
-    def Thread7214(self, request, sender_info):
-        print("Thread7214")
-        response = self.transducer_access.\
-            write_transducer_sample_data_to_a_channel_of_a_tim(*request[1:])
+        Args:
+            request:     The request passed down from handle_message
+            sender_info: The information about where to send the reply
+                         via the network interface.
+            function:    The function to be called which provides the
+                         appropriate 1451-1 service.
+        """
+        response = function(*request[1:])
         msg = str(request[0]) + \
             ',' + self.network_interface.parse_outbound(response)
         self.network_interface.send_message(

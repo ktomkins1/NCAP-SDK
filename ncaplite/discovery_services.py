@@ -8,15 +8,23 @@
 """
 
 import xml.etree.ElementTree as ET
-import os
+
 
 class DiscoveryServices(object):
+    """This class defines the discover services offered by an NCAP.
+
+    .. note::
+        Currently the join / unjoin functions use the xmpp roster but
+        in reality I don't think these two things should be coupled. We
+        need more clarification on the purpose of Join / Unjoin in the
+        standard.
+    """
 
     def __init__(self, roster_path):
         """
         """
-        self.client_list=[]
-        self.roster_path=roster_path
+        self.client_list = []
+        self.roster_path = roster_path
         with open(self.roster_path, 'r') as f:
             self.tree = ET.parse(self.roster_path)
 
@@ -30,39 +38,39 @@ class DiscoveryServices(object):
         returns FALSE for unregistered, TRUE for registered.
         """
         print("ncap_client_join: "+str(client_id))
-        on_roster=0
+        on_roster = 0
 
         root = self.tree.getroot()
 
         # Setting our list to an empty array
         jid = []
 
-        #We need to find all of our users in our roster and then we can find the JID attribute
+        # We need to find all of our users in our roster
+        # and then we can find the JID attribute
         for user in root.findall('user'):
             jid.append(user.find('jid').text)
 
-
-        # Check to see if the jid is in our list. If it is, we will respond to the message.
+        # Check to see if the jid is in our list.
+        # If it is, we will respond to the message.
         try:
             jid.index(client_id)
             on_roster = 1
         except:
-            # The .index function throws an error if there is no match, so we will use this as
-            #our non-subscribed option.
+            # The .index function throws an error if there is no match,
+            # so we will use this as our non-subscribed option.
             on_roster = -1
             print('Subscription Request Recieved')
             newuser = ET.Element("user")
             newuser.text = '\n'
             root.append(newuser)
             newuser.set('subscription', 'true')
-            jabber=ET.Element("jid")
+            jabber = ET.Element("jid")
             newuser.append(jabber)
-            jabber.text='%s' %(client_id)
-            #with open(self.roster_path, 'w') as f:
+            jabber.text = '%s' % (client_id)
+            # with open(self.roster_path, 'w') as f:
             #    tree.write(f)
 
-
-        return (on_roster)*-1
+        return ((on_roster)*-1, )
 
     def ncap_client_unjoin(self, client_id):
         """
@@ -81,12 +89,14 @@ class DiscoveryServices(object):
         # Setting our list to an empty array
         jid = []
 
-        #find all of our users in our roster and then we can find the JID attribute
+        # find all of our users in our roster and
+        # then we can find the JID attribute
         for user in root.findall('user'):
             jid.append(user.find('jid').text)
 
         print(jid)
-        # Check to see if the jid is in our list. If it is, we will respond to the message.
+        # Check to see if the jid is in our list.
+        # If it is, we will respond to the message.
         try:
             on_roster = 1
             jid.index(client_id)
@@ -108,4 +118,4 @@ class DiscoveryServices(object):
             # with open(self.roster_path, 'w') as f:
             #     tree.write(f)
 
-            return on_roster
+            return (on_roster, )
