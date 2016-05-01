@@ -18,10 +18,9 @@ Vagrant Setup
 1. Install `vagrant <http://www.vagrantup.com/>`__
 2. Install vagrant-hostmanager with
    ``vagrant plugin install vagrant-hostmanager``
-3. Clone this repository
-   ``git clone git://github.com/jeethridge/ncaplite-vagrant``
+3. Clone this repository and ``cd`` into it
 4. Run ``vagrant up``
-5. Connect your spark client to developer@ncaplite.loc
+5. Connect your spark using developer@ncaplite.loc
 
 Udpating your hosts file
 ~~~~~~~~~~~~~~~~~~~~~~~~~
