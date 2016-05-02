@@ -103,6 +103,39 @@ class TransducerDataAccessServices(object):
             time.sleep(sample_interval)
         return (error_code, ncap_id, tim_id, channel_id, transducer_block_data)
 
+    def read_transducer_sample_data_from_multiple_channels_of_a_tim(
+                                                                self,
+                                                                ncap_id,
+                                                                tim_id,
+                                                                channel_ids,
+                                                                timeout,
+                                                                sampling_mode):
+        """Read transducer sample data from multple channels of a TIM.
+
+            Args:
+                ncap_id: ID of the NCAP application being queried
+                tim_id: ID of the TIM being queried
+                channel_ids: tuple with the channel ids to be read from the TIM
+                timeout: The timeout interval before reporting a timeout error
+                sampling_mode: The sampling mode selection
+
+            Returns: A tuple containing the following:
+                error_code: an error code
+                ncap_id: the ncap id
+                tim_id: the id of the tim that was read
+                channel_ids: tuple with the ids of the channels read
+                sample_data: the list of samples read, one for each channel_id
+        """
+
+        sample_data = []
+        for channel_id in channel_ids:
+            trans_comm_id = self.transducer_access.open(tim_id, channel_id)
+            self.transducer_access.read_data(trans_comm_id, timeout,
+                                             sampling_mode, sample_data)
+            self.transducer_access.close(trans_comm_id)
+        error_code = 0
+        return (error_code, ncap_id, tim_id, channel_ids, sample_data)
+
     def write_transducer_sample_data_to_a_channel_of_a_tim(self,
                                                            ncap_id,
                                                            tim_id,

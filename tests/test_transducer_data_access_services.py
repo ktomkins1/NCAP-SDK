@@ -163,3 +163,67 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         tdaccs.read_data.assert_called_with(1, 100, 5, mock.ANY)
         self.assertEqual(t_expected, t_actual)
         self.assertEqual(expected_response, response)
+
+    def test_read_transducer_sample_data_from_multiple_channels(self):
+        """ Test reading transducer block data channel of a tim. """
+        self.out_data = {1: 1024, 2: 1025, 3: 1026}
+        self.transducer_interfaces = {
+                                      1: (1, 1),  # comm_id0 : tim_id0, chanid0
+                                      2: (1, 2),  # comm_id1 : tim_id0, chanid1
+                                      3: (1, 3),  # comm_id2 : tim_id1, chanid0
+                                      }
+
+        def find_com_id(tim_id, channel_id):
+            """ Simple helper function to find trans_comm_id given
+            a tim_id and channel_id. Assumes 0 is not a valid trans_comm_id.
+            """
+            for comid, tim in self.transducer_interfaces.iteritems():
+                if tim == (tim_id, channel_id):
+                    return comid
+            return 0  # assumes 0 not valid comid
+
+        def open_mock(tim_id, channel_id):
+            trans_comm_id = find_com_id(tim_id, channel_id)
+            return trans_comm_id
+
+        def read_data_mock(trans_comm_id, timeout,
+                           sampling_mode, result):
+            data = self.out_data[trans_comm_id]
+            result.append(data)
+            data = data+1
+            self.out_data[trans_comm_id] = data
+            return 0
+
+        tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
+        tdaccs.open.side_effect = open_mock
+        tdaccs.read_data.side_effect = read_data_mock
+
+        tdas = transducer_data_access_services.TransducerDataAccessServices()
+        tdas.register_transducer_access_service(tdaccs)
+
+        request = {
+                   'ncap_id': 1234,
+                   'tim_id': 01,
+                   'channel_ids': (01, 02, 03),
+                   'timeout': 100,
+                   'sample_mode': 5,
+                }
+
+        expected_response = (0, 1234, 1, (01, 02, 03), [1024, 1025, 1026])
+
+        response = tdas.\
+            read_transducer_sample_data_from_multiple_channels_of_a_tim(
+                                                request['ncap_id'],
+                                                request['tim_id'],
+                                                request['channel_ids'],
+                                                request['timeout'],
+                                                request['sample_mode']
+                                                )
+
+        for chan in request['channel_ids']:
+            tdaccs.open.assert_any_call(01, chan)
+
+        for trans_if in self.transducer_interfaces.keys():
+            tdaccs.read_data.assert_any_call(trans_if, 100, 5, mock.ANY)
+
+        self.assertEqual(expected_response, response)
