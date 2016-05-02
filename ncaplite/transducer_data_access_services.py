@@ -166,3 +166,45 @@ class TransducerDataAccessServices(object):
         error_code = 0
 
         return (error_code, ncap_id, tim_id, channel_id)
+
+    def write_transducer_block_data_to_a_channel_of_a_tim(self,
+                                                          ncap_id,
+                                                          tim_id,
+                                                          channel_id,
+                                                          timeout,
+                                                          number_of_samples,
+                                                          sample_interval,
+                                                          start_time,
+                                                          data_values):
+        """ Write transducer block data to a channel of a TIM.
+
+        Args:
+            ncap_id: the ncap ID
+            tim_id: the ID of the TIM to read from
+            channel_id: the channel ID of the TIM
+            timeout: a timeout value for the read attempt
+            number_of_samples: the number of samples to read
+            sample_interval: the desired interval between each sample
+            start_time: the start time to begin reading
+            data_values: list of values to be written
+
+        Returns:
+            error_code: an error code
+            ncap_id: the ncap id
+            tim_id: the id of the tim that was read
+            channel_id: the id of the channel read from the TIM
+        """
+        error_code = 0
+        sampling_mode = 5
+
+        time.sleep(start_time)
+
+        for data_value in data_values:
+            args = (ncap_id, tim_id, channel_id,
+                    timeout, sampling_mode, data_value)
+            result = \
+                self.write_transducer_sample_data_to_a_channel_of_a_tim(*args)
+            if(result[0] != 0):
+                error_code = 1
+            time.sleep(sample_interval)
+        return (error_code, ncap_id, tim_id, channel_id)
