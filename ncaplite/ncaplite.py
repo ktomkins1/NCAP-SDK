@@ -72,7 +72,7 @@ class NCAP(object):
                                         "message", self.on_network_if_message)
 
     def register_discovery_service(self, discovery):
-        print('Registered Discover Service')
+        print('Registered Discovery Service')
         self.discovery_service = discovery
 
         self.message_handlers[7108] = self.discovery_service.ncap_client_join
@@ -85,6 +85,8 @@ class NCAP(object):
             read_transducer_sample_data_from_a_channel_of_a_tim
         self.message_handlers[7212] = self.transducer_access.\
             read_transducer_block_data_from_a_channel_of_a_tim
+        self.message_handlers[7213] = self.transducer_access.\
+            read_transducer_sample_data_from_multiple_channels_of_a_tim
         self.message_handlers[7214] = self.transducer_access.\
             write_transducer_sample_data_to_a_channel_of_a_tim
 
