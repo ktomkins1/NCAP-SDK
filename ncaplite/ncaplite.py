@@ -87,6 +87,8 @@ class NCAP(object):
             read_transducer_block_data_from_a_channel_of_a_tim
         self.message_handlers[7213] = self.transducer_access.\
             read_transducer_sample_data_from_multiple_channels_of_a_tim
+        self.message_handlers[7214] = self.transducer_access.\
+            read_transducer_block_data_from_multiple_channels_of_a_tim
         self.message_handlers[7217] = self.transducer_access.\
             write_transducer_sample_data_to_a_channel_of_a_tim
         self.message_handlers[7218] = self.transducer_access.\
