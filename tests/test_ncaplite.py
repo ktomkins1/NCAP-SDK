@@ -291,11 +291,11 @@ class TestNcaplite(unittest.TestCase):
         ncap_client.start()
         time.sleep(1)
 
-        msgs = ('7214,1234,1,2,100,0,1024',
-                '7214,1234,1,2,100,0,1025',
-                '7214,1234,1,2,100,0,1026')
+        msgs = ('7217,1234,1,2,100,0,1024',
+                '7217,1234,1,2,100,0,1025',
+                '7217,1234,1,2,100,0,1026')
 
-        expected_response = (7214, 0, 1234, 1, 2)
+        expected_response = (7217, 0, 1234, 1, 2)
         expected_write_out = [1024, 1025, 1026]
 
         for msg in msgs:
