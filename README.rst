@@ -24,11 +24,13 @@ ncaplite contains a python package and reference design for implementing IEEE P2
 Features
 --------
 
-* Join / unjoin
-* Read sample from single transducer channel
-* Read sample block data from single transducer channel
-* Write sample to single transducer channel
-
+* Join / Unjoin
+* Read transducer sample from a single channel of a TIM
+* Read transducer block data from a single channel of a TIM
+* Read transducer sample from multiple channels of a TIM
+* Read transducer block data from multiple channels of a TIM
+* Write transducer sample to a single channel of a TIM
+* Write transducer block data to a single channel of a TIM
 
 Developer Setup Using Vagrant
 -----------------------------
@@ -100,7 +102,7 @@ wanted an IP address that was unlikely to be used on a given developer
 machine.
 
 Prosody Installation
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
 I combined the info in these two articles and put in my own hostname in
 the appropriate fields. The install consists mostly of defaults with a
@@ -112,7 +114,7 @@ automatically in the provisioning.sh script.
 2. https://www.debian-administration.org/article/700/Using\_the\_prosody\_xmpp/chat\_server
 
 Accounts
---------
+~~~~~~~~~~~~
 
 There are three accounts set up on the server by default. These are:
 
@@ -148,7 +150,7 @@ address,port tuple to the xmpp client, eg.
 
 ::
 
-    ugly_hardcoded_address-('10.10.100.4',5222)
+    ugly_hardcoded_address('10.10.100.4',5222)
     xmpp.connect(ugly_hardcoded_address)
 
 
@@ -165,17 +167,15 @@ jabber server to do some initial testing with. Once the framework is a
 bit more locked in we'll add the python dev environment and a getting
 started tutorial for other folks on the project.
 
-I'm on Windows, please, God, help.
+Platform Specific Notes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If anything comes up that requires a workaround on Windows boxes, we'll
-try to document it here at first. Supposedly vagrant-hostmanager has
-support for Windows hosts as well, so maybe this section will be pretty
-sparse after all :).
+If anything comes up that requires a workaround on specific platforms, we'll
+try to document it here at first.
 
-**Note 1:** You'll want to run all of this stuff from an elevated
-command prompt. I'm assuming/hoping this is enough for the OS to let the
-scripts edit the hosts file without a fuss.
+**Note 1:** On Windows, you'll want to run all of the vagrant stuff from an
+elevated command prompt. I'm assuming/hoping this is enough for the OS to
+let the scripts edit the hosts file without a fuss.
 
 
 Credits
