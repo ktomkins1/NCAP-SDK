@@ -45,7 +45,6 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         if self.connect(self.broker_address, reattempt=False):
             # self.process(block=True)
             self.process()
-            print("Done")
         else:
             print("Unable to connect.")
 

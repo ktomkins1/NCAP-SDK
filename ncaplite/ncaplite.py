@@ -72,14 +72,12 @@ class NCAP(object):
                                         "message", self.on_network_if_message)
 
     def register_discovery_service(self, discovery):
-        print('Registered Discovery Service')
         self.discovery_service = discovery
 
         self.message_handlers[7108] = self.discovery_service.ncap_client_join
         self.message_handlers[7109] = self.discovery_service.ncap_client_unjoin
 
     def register_transducer_data_access_service(self, transducer_access):
-        print('Registered Transducer Data Access Service')
         self.transducer_access = transducer_access
         self.message_handlers[7211] = self.transducer_access.\
             read_transducer_sample_data_from_a_channel_of_a_tim
@@ -95,11 +93,9 @@ class NCAP(object):
             write_transducer_block_data_to_a_channel_of_a_tim
 
     def start(self):
-        print("NCAP Started")
         self.network_interface.run()
 
     def stop(self):
-        print("NCAP Stoped")
         self.network_interface.disconnect()
 
     def on_network_if_message(self, msg):
@@ -109,22 +105,15 @@ class NCAP(object):
         """
         if msg['type'] in ('chat', 'normal'):
             if self.type == "server":
-                print("Server got normal chat msg: "+str(msg))
                 self.handle_message(msg)
-            else:
-                print("Client got normal chat msg: "+str(msg))
-        else:
-            print("Got unknown message type: "+str(msg))
 
     def on_network_if_session_start(self, event):
         """
         Callback for start of new session on the network interface
         :return:
         """
-        announce = "Network Session Start."
         self.network_interface.send_presence()
         self.network_interface.get_roster()
-        print(announce)
 
     def handle_message(self, msg):
         """
@@ -140,7 +129,6 @@ class NCAP(object):
         if request[0] in [7108, 7109]:
             request = (request[0], sender[1])
 
-        print("Request :" + str(request))
         thread.start_new_thread(self.handler_thread,
                                 (request,
                                  sender,

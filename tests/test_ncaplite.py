@@ -29,11 +29,9 @@ class TestNcaplite(unittest.TestCase):
         """Setup for NCAP unit tests"""
         if (os.environ.get('USER', '') == 'vagrant') or ('TRAVIS'
                                                          in os.environ):
-            print("...environment is virtualized")
             self.config_file_path = 'tests/testconfig.xml'
             self.test_broker_ip = '127.0.0.1'
         else:
-            print("...environment is dev machine")
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
 
@@ -65,7 +63,7 @@ class TestNcaplite(unittest.TestCase):
                                                 jid, password, broker_address)
         ncap.register_network_interface(network_if)
         ncap.start()
-        time.sleep(1)
+        time.sleep(.5)
         ncap.stop()
 
     def test_ncap_can_take_empty_broker_address(self):
@@ -84,7 +82,7 @@ class TestNcaplite(unittest.TestCase):
                                                 jid, password, broker_address)
         ncap.register_network_interface(network_if)
         ncap.start()
-        time.sleep(1)
+        time.sleep(.5)
         ncap.stop()
 
     def test_can_read_ncap_config_file(self):
@@ -93,7 +91,6 @@ class TestNcaplite(unittest.TestCase):
         root = tree.getroot()
 
         roster_path = root.find('roster_path').text
-        print(roster_path)
         assert(roster_path == 'tests/testroster.xml')
         broker_ip = root.find('broker_address').find('address').text
         assert(broker_ip == self.test_broker_ip)
@@ -123,7 +120,7 @@ class TestNcaplite(unittest.TestCase):
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
         ncap.register_network_interface(network_if)
         ncap.start()
-        time.sleep(1)
+        time.sleep(.5)
         ncap.stop()
 
     def test_client_join_unjoin(self):
@@ -151,6 +148,8 @@ class TestNcaplite(unittest.TestCase):
         msgs = ['7108', '7109']
         expected_roster_status = [1, 0]
         actual_roster_status = []
+
+        time.sleep(.5)
 
         for msg in msgs:
             ncap_client.network_interface.send_message(
@@ -189,7 +188,6 @@ class TestNcaplite(unittest.TestCase):
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
-            print("RESP: " + str(resp))
             self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
@@ -223,7 +221,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
         msgs = ['7211,1234,1,2,100,0']
         expected_response = (7211, 0, 1234, 1, 2, 1024)
@@ -232,9 +230,7 @@ class TestNcaplite(unittest.TestCase):
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
-            time.sleep(1)
-            print("actual: " + str(self.actual_response))
-            print("expected:" + str(expected_response))
+            time.sleep(.5)
 
         ncap_client.stop()
         ncap.stop()
@@ -289,7 +285,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
         msgs = ('7217,1234,1,2,100,0,1024',
                 '7217,1234,1,2,100,0,1025',
@@ -302,7 +298,7 @@ class TestNcaplite(unittest.TestCase):
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
-            time.sleep(1)
+            time.sleep(.5)
             self.assertEqual(expected_response, self.actual_response)
 
         ncap_client.stop()
@@ -361,16 +357,16 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
-        msgs = ['7212,1234,1,2,100,3,1,0']
+        msgs = ['7212,1234,1,2,100,3,.1,0']
         expected_response = (7212, 0, 1234, 1, 2, [1024, 1025, 1026])
 
         for msg in msgs:
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
-            time.sleep(4)
+            time.sleep(.5)
 
         ncap_client.stop()
         ncap.stop()
@@ -444,7 +440,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
         msgs = ['7213,1234,1,1;2;3,100,5']
         expected_response = (7213, 0, 1234, 1, [1, 2, 3], [1024, 1025, 1026])
@@ -453,7 +449,7 @@ class TestNcaplite(unittest.TestCase):
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
-            time.sleep(1)
+            time.sleep(.5)
 
         ncap_client.stop()
         ncap.stop()
@@ -527,7 +523,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
         msgs = ['7214,1234,1,1;2;3,100,3,0.1,0.1']
         expected_response = (7214, 0, 1234, 1, [1, 2, 3], [1024, 1025, 1026,
@@ -593,7 +589,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap.start()
         ncap_client.start()
-        time.sleep(1)
+        time.sleep(.5)
 
         msgs = ('7218,1234,1,2,100,3,0.1,0.1,1024;1025;1026',)
 
