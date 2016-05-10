@@ -26,15 +26,15 @@ class NCAP(object):
 
     """
 
-    def __init__(self, id):
+    def __init__(self, name="NCAP"):
         """
 
         :param ncap_config: NCAP configuration file path
         :return:
         """
-        self.id = id  # EUI64
+        self.id = 0  # EUI64
         self.type = "server"
-        self.name = "mr. ncap"
+        self.name = name
         self.model_number = 0
         self.serial_number = 0
         self.manufacturer_id = 0

@@ -127,7 +127,7 @@ class TestNcaplite(unittest.TestCase):
         """ Check we can spawn a thread the allows us to join/unjoin the roster
         based on a client request. """
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -135,7 +135,7 @@ class TestNcaplite(unittest.TestCase):
         discovery = discovery_services.DiscoveryServices(roster_path)
         ncap.register_discovery_service(discovery)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -198,7 +198,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -207,7 +207,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -262,7 +262,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -271,7 +271,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -334,7 +334,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -343,7 +343,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -417,7 +417,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -426,7 +426,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -500,7 +500,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -509,7 +509,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
@@ -566,7 +566,7 @@ class TestNcaplite(unittest.TestCase):
         tdas.register_transducer_access_service(tdaccs)
 
         roster_path = 'tests/testroster.xml'
-        ncap = ncaplite.NCAP(12345)
+        ncap = ncaplite.NCAP()
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
@@ -575,7 +575,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
-        ncap_client = ncaplite.NCAP(67890)
+        ncap_client = ncaplite.NCAP()
         ncap_client.type = "client"
         client_jid = 'unittest@ncaplite.loc'
         client_password = 'mypassword'
