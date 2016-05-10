@@ -7,6 +7,8 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/trusty64"
 
+  #add a bridged network adapter to VM that uses DHCP
+  config.vm.network "public_network"
 
   #If the hostmanager plugin is available, use it.
   if Vagrant.has_plugin?("vagrant-hostmanager")
