@@ -108,7 +108,6 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                                     sample
                                                     )
 
-        print(str(expected_output))
         tdaccs.open.assert_called_with(01, 01)
         tdaccs.write_data.assert_called_with(1, 100, 0, mock.ANY)
         self.assertEqual(expected_response, response)
@@ -140,8 +139,8 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                    'channel_id': 02,
                    'timeout': 100,
                    'number_of_samples': 3,
-                   'sample_interval': 1,
-                   'start_time': 1
+                   'sample_interval': .1,
+                   'start_time': .1
                 }
 
         expected_response = (0, 1234, 1, 2, [1024, 1025, 1026])
@@ -158,7 +157,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                                 request['start_time']
                                                 )
         t_end = time.time()
-        t_actual = int(t_end - t_start)
+        t_actual = int((t_end - t_start)*10)
         tdaccs.open.assert_called_with(01, 02)
         tdaccs.read_data.assert_called_with(1, 100, 5, mock.ANY)
         self.assertEqual(t_expected, t_actual)

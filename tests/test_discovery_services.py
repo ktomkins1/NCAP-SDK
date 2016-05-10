@@ -21,11 +21,9 @@ class TestDiscoveryServices(unittest.TestCase):
     def setUp(self):
         """Setup for NCAP unit tests"""
         if (os.environ.get('USER', '') == 'vagrant') or ('TRAVIS' in os.environ):
-            print("environment is virtualized")
             self.config_file_path = 'tests/testconfig.xml'
             self.test_broker_ip = '127.0.0.1'
         else:
-            print("environment is dev machine")
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
 
@@ -70,7 +68,6 @@ class TestDiscoveryServices(unittest.TestCase):
         discovery = discovery_services.DiscoveryServices(roster_path)
         client_id = 'unittest@ncaplite.loc'
 
-        print("JOIN")
         discovery.ncap_client_join(client_id)
 
         # tree = ET.parse(roster_path)
@@ -87,14 +84,12 @@ class TestDiscoveryServices(unittest.TestCase):
 
         assert(on_roster == 1)
 
-        print("UNJOIN")
         discovery.ncap_client_unjoin(client_id)
 
         jids = []
         for user in root.findall('user'):
             jids.append(user.find('jid').text)
 
-        print("JIDS"+str(jids))
         if(client_id in jids):
             on_roster = 1
         else:

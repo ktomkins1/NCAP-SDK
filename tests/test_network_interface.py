@@ -23,11 +23,9 @@ class TestNetworkInterface(unittest.TestCase):
     def setUp(self):
         if (os.environ.get('USER', '') == 'vagrant') or ('TRAVIS'
                                                          in os.environ):
-            print("...environment is virtualized")
             self.config_file_path = 'tests/testconfig.xml'
             self.test_broker_ip = '127.0.0.1'
         else:
-            print("...environment is dev machine")
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
 

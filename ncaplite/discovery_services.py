@@ -37,7 +37,6 @@ class DiscoveryServices(object):
 
         returns FALSE for unregistered, TRUE for registered.
         """
-        print("ncap_client_join: "+str(client_id))
         on_roster = 0
 
         root = self.tree.getroot()
@@ -59,7 +58,6 @@ class DiscoveryServices(object):
             # The .index function throws an error if there is no match,
             # so we will use this as our non-subscribed option.
             on_roster = -1
-            print('Subscription Request Recieved')
             newuser = ET.Element("user")
             newuser.text = '\n'
             root.append(newuser)
@@ -79,7 +77,6 @@ class DiscoveryServices(object):
 
         returns FALSE for unregistered, TRUE for registered.
         """
-        print("ncap_client_unjoin: "+str(client_id))
         on_roster = 0
         # with open(self.roster_path, 'r') as f:
         #     tree = ET.parse(f)
@@ -94,24 +91,19 @@ class DiscoveryServices(object):
         for user in root.findall('user'):
             jid.append(user.find('jid').text)
 
-        print(jid)
         # Check to see if the jid is in our list.
         # If it is, we will respond to the message.
         try:
             on_roster = 1
             jid.index(client_id)
-            print("unjoin: on roster")
         except:
             on_roster = -1
-            print("unjoin: not on roster")
 
         if on_roster >= 0:
-            print('unjoin: Request Recieved')
             # find all of our users in roster and then find the JID attribute
             for user in root.findall('user'):
                 test12 = (user.find('jid').text)
                 if test12 == client_id:
-                    print("found:" + str(test12))
                     root.remove(user)
             self.tree = ET.ElementTree(root)
             # os.remove(self.roster_path)
