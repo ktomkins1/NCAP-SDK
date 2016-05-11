@@ -10,12 +10,12 @@ import simple_transducer_service
 
 if __name__ == '__main__':
 
-    print("Starting Simple NCAP Demo...")
+    print("Running Simple NCAP Demo...")
 
     config_file_path = 'ncapconfig.xml'
 
     # create an ncap instance
-    ncap = ncaplite.NCAP(12345)
+    ncap = ncaplite.NCAP()
 
     # load the ncapconfig.xml into the ncap instance
     ncap.load_config(config_file_path)
