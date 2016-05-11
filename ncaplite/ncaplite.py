@@ -149,8 +149,11 @@ class NCAP(object):
             function:    The function to be called which provides the
                          appropriate 1451-1 service.
         """
-        response = function(*request[1:])
-        msg = str(request[0]) + \
-            ',' + self.network_interface.parse_outbound(response)
-        self.network_interface.send_message(
-                        mto=str(sender_info[1]), mbody=msg, mtype='chat')
+        try:
+            response = function(*request[1:])
+            msg = str(request[0]) + \
+                ',' + self.network_interface.parse_outbound(response)
+            self.network_interface.send_message(
+                            mto=str(sender_info[1]), mbody=msg, mtype='chat')
+        except Exception as e:
+            print("Exception: "+str(e))

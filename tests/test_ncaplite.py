@@ -608,6 +608,25 @@ class TestNcaplite(unittest.TestCase):
 
         self.assertEqual(expected_write_out, self.result)
 
+    def test_handles_invalid_no_args(self):
+
+        def add(a, b):
+            return a+b
+
+        def send_message_stub(mto="none", mbody="none", mtype='chat'):
+            return
+
+        ncap = ncaplite.NCAP()
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(
+                ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        ncap.register_network_interface(network_if)
+        ncap.network_interface.send_message = send_message_stub
+
+        bad_args = (9999, 1, 2, 3, 4, 5)
+        ncap.handler_thread(request=bad_args, sender_info="none", function=add)
+    
+
 if __name__ == '__main__':
     import sys
     sys.exit(unittest.main())
