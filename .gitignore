@@ -66,3 +66,9 @@ target/
 
 #OSX
 .DS_Store
+
+#atom-sync
+.sync-config.cson
+
+#scratch directory
+.scratch/
