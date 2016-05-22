@@ -52,11 +52,15 @@ class TransducerDataAccessServices(object):
             sample_data: the block of sample data given as a list
         """
         sample_data = []
-        trans_comm_id = self.transducer_access.open(tim_id, channel_id)
-        self.transducer_access.read_data(trans_comm_id, timeout,
-                                         sampling_mode, sample_data)
-        self.transducer_access.close(trans_comm_id)
         error_code = 0
+        (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
+                                                                  channel_id)
+
+        (error_code, sample_data) = self.transducer_access.read_data(
+                                                                trans_comm_id,
+                                                                timeout,
+                                                                sampling_mode)
+        self.transducer_access.close(trans_comm_id)
 
         return (error_code, ncap_id, tim_id, channel_id, sample_data)
 
@@ -99,7 +103,7 @@ class TransducerDataAccessServices(object):
                 self.read_transducer_sample_data_from_a_channel_of_a_tim(*args)
             if(result[0] != 0):
                 error_code = 1
-            transducer_block_data.append(result[4][0])
+            transducer_block_data.append(result[4])
             time.sleep(sample_interval)
         return (error_code, ncap_id, tim_id, channel_id, transducer_block_data)
 
@@ -126,12 +130,18 @@ class TransducerDataAccessServices(object):
                 channel_ids: tuple with the ids of the channels read
                 sample_data: the list of samples read, one for each channel_id
         """
-
+        error_code = 0
         sample_data = []
         for channel_id in channel_ids:
-            trans_comm_id = self.transducer_access.open(tim_id, channel_id)
-            self.transducer_access.read_data(trans_comm_id, timeout,
-                                             sampling_mode, sample_data)
+            (error_code, trans_comm_id) = self.transducer_access.open(
+                                                                    tim_id,
+                                                                    channel_id)
+
+            (error_code, sample) = self.transducer_access.read_data(
+                                                            trans_comm_id,
+                                                            timeout,
+                                                            sampling_mode)
+            sample_data.append(sample)
             self.transducer_access.close(trans_comm_id)
         error_code = 0
         return (error_code, ncap_id, tim_id, channel_ids, sample_data)
@@ -167,7 +177,7 @@ class TransducerDataAccessServices(object):
             request = (ncap_id, tim_id, channel_id, timeout,
                        number_of_samples, sample_interval, start_time)
             result = self.\
-                    read_transducer_block_data_from_a_channel_of_a_tim(*request)
+                read_transducer_block_data_from_a_channel_of_a_tim(*request)
             if(result[0] != 0):
                 error_code = 1
             [sample_data.append(datum) for datum in result[4]]
@@ -197,7 +207,8 @@ class TransducerDataAccessServices(object):
             tim_id: the id of the tim that was read
             channel_id: the id of the channel read from the TIM
         """
-        trans_comm_id = self.transducer_access.open(tim_id, channel_id)
+        (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
+                                                                  channel_id)
         self.transducer_access.write_data(trans_comm_id, timeout,
                                           sampling_mode, sample_data)
         self.transducer_access.close(trans_comm_id)

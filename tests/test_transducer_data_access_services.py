@@ -30,12 +30,15 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
-            result.append(1024)
+                           sampling_mode):
+            error_code = 0
+            result = 1024
+            return (error_code, result)
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -52,7 +55,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'sampling_mode': 0
                 }
 
-        expected_response = (0, 1234, 1, 1, [1024])
+        expected_response = (0, 1234, 1, 1, 1024)
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
                                                     request['ncap_id'],
                                                     request['tim_id'],
@@ -62,7 +65,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                                     )
 
         tdaccs.open.assert_called_with(01, 01)
-        tdaccs.read_data.assert_called_with(1, 100, 0, mock.ANY)
+        tdaccs.read_data.assert_called_with(1, 100, 0)
         self.assertEqual(expected_response, response)
 
     def test_write_transducer_sample_data_to_a_channel_of_a_tim(self):
@@ -70,8 +73,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         self.result = []
 
@@ -117,13 +121,16 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         """ Test reading transducer block data channel of a tim. """
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
-            result.append(read_data_mock.count)
+                           sampling_mode):
+            result = read_data_mock.count
             read_data_mock.count = read_data_mock.count+1
+            error_code = 0
+            return (error_code, result)
         read_data_mock.count = 1024
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
@@ -159,7 +166,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         t_end = time.time()
         t_actual = int((t_end - t_start)*10)
         tdaccs.open.assert_called_with(01, 02)
-        tdaccs.read_data.assert_called_with(1, 100, 5, mock.ANY)
+        tdaccs.read_data.assert_called_with(1, 100, 5)
         self.assertEqual(t_expected, t_actual)
         self.assertEqual(expected_response, response)
 
@@ -182,16 +189,18 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             return 0  # assumes 0 not valid comid
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = find_com_id(tim_id, channel_id)
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
+                           sampling_mode):
             data = self.out_data[trans_comm_id]
-            result.append(data)
+            result = data
             data = data+1
             self.out_data[trans_comm_id] = data
-            return 0
+            error_code = 0
+            return (error_code, result)
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -223,7 +232,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             tdaccs.open.assert_any_call(01, chan)
 
         for trans_if in self.transducer_interfaces.keys():
-            tdaccs.read_data.assert_any_call(trans_if, 100, 5, mock.ANY)
+            tdaccs.read_data.assert_any_call(trans_if, 100, 5)
 
         self.assertEqual(expected_response, response)
 
@@ -246,16 +255,18 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             return 0  # assumes 0 not valid comid
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = find_com_id(tim_id, channel_id)
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
+                           sampling_mode):
+            error_code = 0
             data = self.out_data[trans_comm_id]
-            result.append(data)
+            result = data
             data = data+1
             self.out_data[trans_comm_id] = data
-            return 0
+            return (error_code, result)
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -293,7 +304,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             tdaccs.open.assert_any_call(01, chan)
 
         for trans_if in self.transducer_interfaces.keys():
-            tdaccs.read_data.assert_any_call(trans_if, 100, 5, mock.ANY)
+            tdaccs.read_data.assert_any_call(trans_if, 100, 5)
 
         self.assertEqual(expected_response, response)
 
@@ -302,8 +313,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         self.result = []
 

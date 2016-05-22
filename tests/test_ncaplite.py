@@ -179,12 +179,15 @@ class TestNcaplite(unittest.TestCase):
         a channel of a TIM """
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
-            result.append(1024)
+                           sampling_mode):
+            error_code = 0
+            result = 1024
+            return (error_code, result)
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
@@ -241,8 +244,9 @@ class TestNcaplite(unittest.TestCase):
         a channel of a TIM """
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         self.result = []
 
@@ -313,13 +317,16 @@ class TestNcaplite(unittest.TestCase):
         self.actual_response = (0, 0, 0)
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
-            result.append(read_data_mock.count)
+                           sampling_mode):
+            result = read_data_mock.count
+            error_code = 0
             read_data_mock.count = read_data_mock.count+1
+            return (error_code, result)
         read_data_mock.count = 1024
 
         def client_on_data(msg):
@@ -394,16 +401,18 @@ class TestNcaplite(unittest.TestCase):
             return 0  # assumes 0 not valid comid
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = find_com_id(tim_id, channel_id)
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
+                           sampling_mode):
             data = self.out_data[trans_comm_id]
-            result.append(data)
+            result = data
+            error_code = 0
             data = data+1
             self.out_data[trans_comm_id] = data
-            return 0
+            return (error_code, result)
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
@@ -477,16 +486,18 @@ class TestNcaplite(unittest.TestCase):
             return 0  # assumes 0 not valid comid
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = find_com_id(tim_id, channel_id)
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode, result):
+                           sampling_mode):
             data = self.out_data[trans_comm_id]
-            result.append(data)
+            result = data
+            error_code = 0
             data = data+1
             self.out_data[trans_comm_id] = data
-            return 0
+            return (error_code, result)
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
@@ -545,8 +556,9 @@ class TestNcaplite(unittest.TestCase):
         a channel of a TIM """
 
         def open_mock(tim_id, channel_id):
+            error_code = 0
             trans_comm_id = 1
-            return trans_comm_id
+            return (error_code, trans_comm_id)
 
         self.result = []
 
@@ -625,7 +637,7 @@ class TestNcaplite(unittest.TestCase):
 
         bad_args = (9999, 1, 2, 3, 4, 5)
         ncap.handler_thread(request=bad_args, sender_info="none", function=add)
-    
+
 
 if __name__ == '__main__':
     import sys
