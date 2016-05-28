@@ -226,7 +226,7 @@ class TestNcaplite(unittest.TestCase):
         ncap_client.start()
         time.sleep(.5)
 
-        msgs = ['7211,1234,1,2,100,0']
+        msgs = ['7211,1234,1,2,0;1000,0']
         expected_response = (7211, 0, 1234, 1, 2, 1024)
 
         for msg in msgs:
@@ -291,9 +291,9 @@ class TestNcaplite(unittest.TestCase):
         ncap_client.start()
         time.sleep(.5)
 
-        msgs = ('7217,1234,1,2,100,0,1024',
-                '7217,1234,1,2,100,0,1025',
-                '7217,1234,1,2,100,0,1026')
+        msgs = ('7217,1234,1,2,0;1000,0,1024',
+                '7217,1234,1,2,0;1000,0,1025',
+                '7217,1234,1,2,0;1000,0,1026')
 
         expected_response = (7217, 0, 1234, 1, 2)
         expected_write_out = [1024, 1025, 1026]

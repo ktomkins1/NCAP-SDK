@@ -13,7 +13,7 @@ import mock
 import time
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
-
+import ieee1451types as ieee1451
 
 class TestTransducerDataAccessServices(unittest.TestCase):
     """This class defines the test runner for Discovery Services"""
@@ -51,7 +51,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
-                'timeout': 100,
+                'timeout': ieee1451.TimeDuration(0,1000),
                 'sampling_mode': 0
                 }
 
@@ -65,7 +65,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                                     )
 
         tdaccs.open.assert_called_with(01, 01)
-        tdaccs.read_data.assert_called_with(1, 100, 0)
+        tdaccs.read_data.assert_called_with(1,
+                                            ieee1451.TimeDuration(0,1000),
+                                            0)
         self.assertEqual(expected_response, response)
 
     def test_write_transducer_sample_data_to_a_channel_of_a_tim(self):
@@ -94,7 +96,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
-                'timeout': 100,
+                'timeout': ieee1451.TimeDuration(0,1000),
                 'sampling_mode': 0,
                 }
 
@@ -113,6 +115,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                                     )
 
         tdaccs.open.assert_called_with(01, 01)
-        tdaccs.write_data.assert_called_with(1, 100, 0, mock.ANY)
+        tdaccs.write_data.assert_called_with(1, ieee1451.TimeDuration(0,1000),
+                                             0, mock.ANY)
         self.assertEqual(expected_response, response)
         self.assertEqual(expected_output, self.result)
