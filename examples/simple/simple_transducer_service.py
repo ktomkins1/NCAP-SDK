@@ -37,28 +37,33 @@ class TransducerAccessSimple(TransducerAccessBase):
     def open(self, tim_id, channel_id):
         trans_comm_id = self.find_com_id(tim_id, channel_id)
         print("open: " + str(trans_comm_id))
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         return (error_code, trans_comm_id)
 
     def open_qos(self, tim_id, channel_id, qos_params):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         qos_params = ()
         trans_comm_id = 0
         return (error_code, qos_params, trans_comm_id)
 
     def open_group(self, tim_ids, channel_ids):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         trans_comm_id = 0
         return (error_code, trans_comm_id)
 
     def open_group_qos(self, tim_ids, channel_ids, qos_params):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         qos_params = ()
         trans_comm_id = 0
         return (error_code, qos_params, trans_comm_id)
 
     def close(self, trans_comm_id):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
     def read_data(self, trans_comm_id, timeout, sampling_mode):
@@ -68,35 +73,41 @@ class TransducerAccessSimple(TransducerAccessBase):
         print("read data: " + str(tmp))
         data = data+1
         self.out_data[trans_comm_id] = data
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         return (error_code, result)
 
     def write_data(self, trans_comm_id, timeout, sampling_mode, value):
         self.in_data[trans_comm_id] = value
         tmp = (trans_comm_id, self.in_data[trans_comm_id])
         print("write data: " + str(tmp))
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
     def start_read_data(self, trans_comm_id, trigger_time, timeout,
                         sampling_mode, callback):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def start_write_data(self, trans_comm_id, trigger_time, timeout,
                          sampling_mode, value, callback):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def start_stream(self, trans_comm_id, callback, operation_id):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def cancel(self, operation_id):
-        error_code = 0
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
 if __name__ == '__main__':

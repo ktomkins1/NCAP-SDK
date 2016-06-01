@@ -6,6 +6,8 @@
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
 """
+import ieee1451types as ieee1451
+
 
 class TransducerDataAccessServices(object):
     """
@@ -49,7 +51,9 @@ class TransducerDataAccessServices(object):
             sample_data: the block of sample data given as a list
         """
         sample_data = []
-        error_code = 0
+        error_code = ieee1451.Error(
+                            ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
                                                                   channel_id)
 
@@ -84,11 +88,14 @@ class TransducerDataAccessServices(object):
             tim_id: the id of the tim that was read
             channel_id: the id of the channel read from the TIM
         """
+        error_code = ieee1451.Error(
+                            ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                            ieee1451.ErrorCode.NO_ERROR)
         (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
                                                                   channel_id)
-        self.transducer_access.write_data(trans_comm_id, timeout,
+        error_code = self.transducer_access.write_data(trans_comm_id, timeout,
                                           sampling_mode, sample_data)
         self.transducer_access.close(trans_comm_id)
-        error_code = 0
+
 
         return (error_code, ncap_id, tim_id, channel_id)

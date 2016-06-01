@@ -10,6 +10,7 @@
 import sys
 import sleekxmpp
 import ast
+import ieee1451types as ieee1451
 
 if sys.version_info < (3, 0):
     from sleekxmpp.util.misc_ops import setdefaultencoding
@@ -77,8 +78,13 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         a properly formatted string for sending via the
         network interface """
         x = msg
-        # make lists semicolon delimited
-        x = [';'.join(map(str, i)) if type(i) is list else i for i in x]
+
+        x = [[i.source.value, i.code.value]\
+                if type(i) is ieee1451.Error else i for i in x ]
+        # make lists and tuples semicolon delimited
+        x = [';'.join(map(str, i)) \
+            if((type(i) is list) or (type(i) is tuple))  \
+            else i for i in x]
         # make x a tuple
         x = tuple(x)
         # turn into a string

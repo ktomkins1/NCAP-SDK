@@ -15,6 +15,7 @@ from ncaplite import network_interface
 from ncaplite import discovery_services
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
+from ncaplite import ieee1451types as ieee1451
 import mock
 import time
 import xml.etree.ElementTree as ET
@@ -179,13 +180,17 @@ class TestNcaplite(unittest.TestCase):
         a channel of a TIM """
 
         def open_mock(tim_id, channel_id):
-            error_code = 0
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
             return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
                            sampling_mode):
-            error_code = 0
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             result = 1024
             return (error_code, result)
 
@@ -227,7 +232,7 @@ class TestNcaplite(unittest.TestCase):
         time.sleep(.5)
 
         msgs = ['7211,1234,1,2,0;1000,0']
-        expected_response = (7211, 0, 1234, 1, 2, 1024)
+        expected_response = (7211, [0, 0], 1234, 1, 2, 1024)
 
         for msg in msgs:
             ncap_client.network_interface.send_message(
@@ -244,7 +249,9 @@ class TestNcaplite(unittest.TestCase):
         a channel of a TIM """
 
         def open_mock(tim_id, channel_id):
-            error_code = 0
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
             return (error_code, trans_comm_id)
 
@@ -252,7 +259,11 @@ class TestNcaplite(unittest.TestCase):
 
         def write_data_mock(trans_comm_id, timeout,
                             sampling_mode, sample_value):
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             self.result.append(sample_value)
+            return error_code
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
@@ -295,7 +306,7 @@ class TestNcaplite(unittest.TestCase):
                 '7217,1234,1,2,0;1000,0,1025',
                 '7217,1234,1,2,0;1000,0,1026')
 
-        expected_response = (7217, 0, 1234, 1, 2)
+        expected_response = (7217, [0, 0], 1234, 1, 2)
         expected_write_out = [1024, 1025, 1026]
 
         for msg in msgs:

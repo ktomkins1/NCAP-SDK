@@ -13,12 +13,15 @@ import mock
 import time
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
-import ieee1451types as ieee1451
+from ncaplite import ieee1451types as ieee1451
 
 class TestTransducerDataAccessServices(unittest.TestCase):
     """This class defines the test runner for Discovery Services"""
     def setUp(self):
         """Setup for unit tests"""
+        self.no_error = ieee1451.Error(
+                                     ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                     ieee1451.ErrorCode.NO_ERROR)
         pass
 
     def tearDown(self):
@@ -30,14 +33,20 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
-            error_code = 0
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
+            print("open mock")
             return (error_code, trans_comm_id)
 
         def read_data_mock(trans_comm_id, timeout,
-                           sampling_mode):
-            error_code = 0
+                       sampling_mode):
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             result = 1024
+            print("read mock")
             return (error_code, result)
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
@@ -55,7 +64,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'sampling_mode': 0
                 }
 
-        expected_response = (0, 1234, 1, 1, 1024)
+        expected_response = (self.no_error, 1234, 1, 1, 1024)
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
                                                     request['ncap_id'],
                                                     request['tim_id'],
@@ -75,7 +84,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         # mock version of the TransducerAccess.open function
         def open_mock(tim_id, channel_id):
-            error_code = 0
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
             return (error_code, trans_comm_id)
 
@@ -83,7 +94,12 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         def write_data_mock(trans_comm_id, timeout,
                             sampling_mode, value):
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
             self.result.append(value)
+            return error_code
+
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -100,7 +116,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'sampling_mode': 0,
                 }
 
-        expected_response = (0, 1234, 1, 1)
+        expected_response = (self.no_error, 1234, 1, 1)
         expected_output = [1024, 1025, 1026]
 
         for sample in expected_output:
@@ -119,3 +135,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                              0, mock.ANY)
         self.assertEqual(expected_response, response)
         self.assertEqual(expected_output, self.result)
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(unittest.main())

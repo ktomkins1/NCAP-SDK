@@ -15,6 +15,8 @@ import unittest
 
 
 from ncaplite import network_interface
+from ncaplite import ieee1451types as ieee1451
+
 import os
 
 
@@ -58,4 +60,15 @@ class TestNetworkInterface(unittest.TestCase):
         actual_output = network_interface.NetworkClient.parse_inbound(
                                                                     test_msg)
 
+        self.assertEqual(expected_output, actual_output)
+
+    def test_parse_outbound_with_error_code(self):
+        """ Test outbound message parsing """
+        error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                     ieee1451.ErrorCode.NO_ERROR)
+
+        test_msg = (1, error_code, 3, [4, 5, 6], 7)
+        expected_output = "1,0;0,3,4;5;6,7"
+        actual_output = network_interface.NetworkClient.parse_outbound(
+                                                                    test_msg)
         self.assertEqual(expected_output, actual_output)
