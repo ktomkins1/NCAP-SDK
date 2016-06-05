@@ -78,19 +78,36 @@ class TypeCode(Enum):
         """Override __str__ method to return just the name."""
         return self._name_
 
+
 class Argument(object):
     """Defines the IEEE1451 Argument generic data container type"""
-    def __init__(self, type_code=TypeCode.UNKNOWN_TC , value = None):
+    def __init__(self, type_code=TypeCode.UNKNOWN_TC, value=None):
         self.value = value
         self.type_code = type_code
+
+    def __eq__(self, other):
+        """Override equality operation."""
+        return self.__dict__ == other.__dict__
+
+    def __cmp__(self, other):
+        """Override comparison operation."""
+        return self.__dict__ == other.__dict__
+
 
 class ArgumentArray(object):
     """Defines argument array"""
 
     def __init__(self):
         self.arguments = dict()
-        self.indicies= dict()
+        self.indicies = dict()
 
+    def __eq__(self, other):
+        """Override equality operation."""
+        return self.__dict__ == other.__dict__
+
+    def __cmp__(self, other):
+        """Override comparison operation."""
+        return self.__dict__ == other.__dict__
 
     def get_by_name(self, name):
         index = self.indicies[name]
@@ -129,3 +146,10 @@ class ArgumentArray(object):
         for idx in range(len(tmp)+1):
             if idx not in tmp:
                 return idx
+
+    def to_tuple(self):
+        """Convert values in ArgumentArray to tuple"""
+        result = []
+        s = sorted(self.arguments.items(), key=lambda t: t[0])
+        [result.append(entry[1].value) for entry in s]
+        return tuple(result)

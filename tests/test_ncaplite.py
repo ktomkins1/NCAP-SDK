@@ -191,8 +191,12 @@ class TestNcaplite(unittest.TestCase):
             error_code = ieee1451.Error(
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
-            result = 1024
-            return (error_code, result)
+            tc = ieee1451.TypeCode.UINT32_TC
+            value = 1024
+            arg = ieee1451.Argument(tc, value)
+            arg_array = ieee1451.ArgumentArray()
+            arg_array.put_by_index(0, arg)
+            return (error_code, arg_array)
 
         def client_on_data(msg):
             resp = network_interface.NetworkClient.parse_inbound(msg['body'])
@@ -307,9 +311,14 @@ class TestNcaplite(unittest.TestCase):
                 '7217,1234,1,2,0;1000,0,1026')
 
         expected_response = (7217, [0, 0], 1234, 1, 2)
-        expected_write_out = [1024, 1025, 1026]
+        expected_write_vals = [1024, 1025, 1026]
+        expected_write_args = []
 
-        for msg in msgs:
+        for i, msg in enumerate(msgs):
+            a = ieee1451.Argument(value=expected_write_vals[i])
+            aa = ieee1451.ArgumentArray()
+            aa.put_by_index(0, a)
+            expected_write_args.append(aa)
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
@@ -318,8 +327,7 @@ class TestNcaplite(unittest.TestCase):
 
         ncap_client.stop()
         ncap.stop()
-
-        self.assertEqual(expected_write_out, self.result)
+        self.assertEqual(expected_write_args, self.result)
 
 
 if __name__ == '__main__':

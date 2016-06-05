@@ -57,7 +57,8 @@ class TimDiscoveryBase(object):
                     communication module ID. 11.6.2, the which the
         Returns:
         ErrorCode error_code: an error code
-        UInt16Array tim_ids: a list which ontains all known TIMs on the IEEE 1451.X module.
+        UInt16Array tim_ids: a list which ontains all known TIMs on the
+                            IEEE 1451.X module.
         """
         error_code = 0
         tim_ids = []
@@ -73,8 +74,8 @@ class TimDiscoveryBase(object):
 
         Returns:
         ErrorCode error_code: an error code
-        UInt16Array channel_ids: is returned to the application and contains all
-                     known TransducerChannels on this TIM.
+        UInt16Array channel_ids: is returned to the application and contains
+                                all known TransducerChannels on this TIM.
         StringArray names: is returned to the application and contains the
                Transducer Channel names.
         """
@@ -107,10 +108,11 @@ class TransducerAccessBase(object):
             UInt16 channel_id: the desired transducer channel
         Returns:
             ErrorCode error_code: an error code
-            UInt16 trans_comm_id: The transport communications id. This acts as the
-            handle for the current comms session with the TIM and Channel.
-            This handle will be used in subsequent method calls to
-            TransducerAccess
+            UInt16 trans_comm_id: The transport communications id. This acts
+                                    as the handle for the current comms session
+                                    with the TIM and Channel. This handle will
+                                    be used in subsequent method calls to
+                                    TransducerAccess
         """
         error_code = 0
         trans_comm_id = 0
@@ -162,17 +164,18 @@ class TransducerAccessBase(object):
 
         Args:
         UInt16Array tim_ids: ID of the desired TIMs
-        UInt16Array channel_ids: specifies the desired TransducerChannels. This field
-                    allows addressing a single TransducerChannel, a
-                    TransducerChannel proxy, a group of TransducerChannels,
-                    or all TransducerChannels connected to an NCAP. See 5.3 for
-                    details.
+        UInt16Array channel_ids: specifies the desired TransducerChannels.
+                                This field allows addressing a single
+                                TransducerChannel, a TransducerChannel proxy,
+                                a group of TransducerChannels, or all
+                                TransducerChannels connected to an NCAP.
+                                See 5.3 for details.
         Returns:
         ErrorCode error_code: an error code
         UInt16 trans_comm_id: The transport communications id. This acts as the
-        handle for the current comms session with the TIM and Channel.
-        This handle will be used in subsequent method calls to
-        TransducerAccess
+                                handle for the current comms session with the
+                                TIM and Channel. This handle will be used in
+                                subsequent method calls to TransducerAccess
         """
         error_code = 0
         trans_comm_id = 0
@@ -264,9 +267,9 @@ class TransducerAccessBase(object):
         discussed in the previous paragraph. .
 
         Args:
-        trans_comm_id: the transport communications id
-        timeout: the timeout
-        sampling_mode: the desired sampling_mode
+        UInt16 trans_comm_id: the transport communications id
+        TimeDuration timeout: the timeout
+        UInt8 sampling_mode:  the desired sampling_mode
 
 
         Returns:
@@ -318,7 +321,7 @@ class TransducerAccessBase(object):
         UInt8 sampling_mode: specifies the triggering mechanism. See 5.11 and
             7.1.2.4 for details. The “value” ArgumentArray is the provided
             actuator input values.
-            value: the value to send
+        ArgumentArray value: the ArgumentArray containing the value to send
 
         Returns:
         ErrorCode error_code: an error_code

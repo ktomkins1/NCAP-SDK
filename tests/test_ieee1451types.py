@@ -41,22 +41,22 @@ class TestIEEE1451Types(unittest.TestCase):
 
         arg = ieee1451.Argument(tc, val)
 
-        assert(arg.value == val )
+        assert(arg.value == val)
         assert(arg.type_code == tc)
 
     def test_argarray_putget_by_index(self):
         """Test ArgumentArray put/get by index."""
 
-        tclist =  (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
-                   ieee1451.TypeCode.UINT16_TC,
-                   ieee1451.TypeCode.STRING_TC)
+        tclist = (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
+                  ieee1451.TypeCode.UINT16_TC,
+                  ieee1451.TypeCode.STRING_TC)
 
         vals = ((3.14159, 1.2345, 0.6789),
                 0xCAFE,
                 "Foobar")
 
         idxs = [0, 1, 23]
-        #put by index
+
         aa = ieee1451.ArgumentArray()
 
         for i, idx in enumerate(idxs):
@@ -65,13 +65,14 @@ class TestIEEE1451Types(unittest.TestCase):
             res = aa.get_by_index(idx)
             assert(arg.value == vals[i])
             assert(arg.type_code == tclist[i])
+            assert(res.value == vals[i])
 
     def test_argarray_putget_by_name(self):
         """Test ArgumentArray put/get by name."""
 
-        tclist =  (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
-                   ieee1451.TypeCode.UINT16_TC,
-                   ieee1451.TypeCode.STRING_TC)
+        tclist = (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
+                  ieee1451.TypeCode.UINT16_TC,
+                  ieee1451.TypeCode.STRING_TC)
 
         vals = ((3.14159, 1.2345, 0.6789),
                 0xCAFE,
@@ -86,6 +87,7 @@ class TestIEEE1451Types(unittest.TestCase):
             aa.put_by_name(name, arg)
             res = aa.get_by_name(name)
             assert(arg.value == vals[i])
+            assert(res.value == vals[i])
             assert(arg.type_code == tclist[i])
 
     def test_argarray_next_index(self):
@@ -93,13 +95,13 @@ class TestIEEE1451Types(unittest.TestCase):
 
         aa = ieee1451.ArgumentArray()
 
-        cases =[ {0: 'a', 1: 'b', 2: 'c'},
+        cases = [{0: 'a', 1: 'b', 2: 'c'},
                  {0: 'a', 1: 'b', 3: 'c'},
                  {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
                  {0: 'a', 1: 'b', 10: 'c', 42: 'd'}
                  ]
 
-        expected  = [3, 2, 0,2]
+        expected = [3, 2, 0, 2]
         for i, test_case in enumerate(cases):
             aa.arguments = test_case
             actual = aa.next_index()
@@ -108,16 +110,15 @@ class TestIEEE1451Types(unittest.TestCase):
     def test_argarray_putbyname_getbyindex(self):
         """Test ArgumentArray put by name, get by index."""
 
-        tclist =  (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
-                   ieee1451.TypeCode.UINT16_TC,
-                   ieee1451.TypeCode.STRING_TC)
+        tclist = (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
+                  ieee1451.TypeCode.UINT16_TC,
+                  ieee1451.TypeCode.STRING_TC)
 
         vals = ((3.14159, 1.2345, 0.6789),
                 0xCAFE,
                 "Foobar")
 
         names = ["foo", "bar", "baz"]
-        expected_idxs = [0, 1, 2]
 
         aa = ieee1451.ArgumentArray()
 
@@ -126,14 +127,15 @@ class TestIEEE1451Types(unittest.TestCase):
             aa.put_by_name(name, arg)
             res = aa.get_by_index(i)
             assert(arg.value == vals[i])
+            assert(res.value == vals[i])
             assert(arg.type_code == tclist[i])
 
     def test_argarray_putbyname_after_arbitrary_index(self):
         """Test we can add type by name at proper index after arbitrary add by
         index"""
-        tclist =  (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
-                   ieee1451.TypeCode.UINT16_TC,
-                   ieee1451.TypeCode.STRING_TC)
+        tclist = (ieee1451.TypeCode.FLOAT32_ARRAY_TC,
+                  ieee1451.TypeCode.UINT16_TC,
+                  ieee1451.TypeCode.STRING_TC)
 
         vals = ((3.14159, 1.2345, 0.6789),
                 0xCAFE,
@@ -144,7 +146,7 @@ class TestIEEE1451Types(unittest.TestCase):
 
         aa = ieee1451.ArgumentArray()
 
-        for i, key  in enumerate(keys):
+        for i, key in enumerate(keys):
             arg = ieee1451.Argument(tclist[i], vals[i])
             if(type(key) is int):
                 aa.put_by_index(key, arg)
@@ -153,7 +155,33 @@ class TestIEEE1451Types(unittest.TestCase):
 
             res = aa.get_by_index(expected_idxs[i])
             assert(arg.value == vals[i])
+            assert(res.value == vals[i])
             assert(arg.type_code == tclist[i])
+
+    def test_argarray_equality_comparison(self):
+        """Test comparison for equality between ArgumentArray instances"""
+        tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
+        vals = (1024.1111, 1025.2222, 1026.3333)
+
+        aa1 = ieee1451.ArgumentArray()
+        arg1 = ieee1451.Argument(tc, vals)
+        aa1.put_by_name("MyArg", arg1)
+
+        aa2 = ieee1451.ArgumentArray()
+        arg2 = ieee1451.Argument(tc, vals)
+        aa2.put_by_name("MyArg", arg2)
+
+        self.assertEquals(aa1, aa2)
+
+    def test_argarray_to_tuple(self):
+        """Test ArgumentArray.to_list"""
+        tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
+        vals = (1024.1111, 1025.2222, 1026.3333)
+        arg = ieee1451.Argument(tc, vals)
+        aa = ieee1451.ArgumentArray()
+        aa.put_by_name("MyArg", arg)
+        result = aa.to_tuple()
+        self.assertEqual(vals, result[0])
 
 if __name__ == '__main__':
     import sys

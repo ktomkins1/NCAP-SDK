@@ -79,12 +79,17 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         network interface """
         x = msg
 
-        x = [[i.source.value, i.code.value]\
-                if type(i) is ieee1451.Error else i for i in x ]
+        x = [[i.source.value, i.code.value]
+             if type(i) is ieee1451.Error else i for i in x]
+
+        x = [i.to_tuple()
+             if type(i) is ieee1451.ArgumentArray else i for i in x]
+
         # make lists and tuples semicolon delimited
-        x = [';'.join(map(str, i)) \
-            if((type(i) is list) or (type(i) is tuple))  \
-            else i for i in x]
+        x = [';'.join(map(str, i))
+            if((type(i) is list) or (type(i) is tuple))
+             else i for i in x]
+
         # make x a tuple
         x = tuple(x)
         # turn into a string

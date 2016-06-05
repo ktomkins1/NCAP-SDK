@@ -10,10 +10,10 @@ Tests for `transducer_data_access_services` module.
 
 import unittest
 import mock
-import time
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
 from ncaplite import ieee1451types as ieee1451
+
 
 class TestTransducerDataAccessServices(unittest.TestCase):
     """This class defines the test runner for Discovery Services"""
@@ -40,14 +40,16 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             print("open mock")
             return (error_code, trans_comm_id)
 
-        def read_data_mock(trans_comm_id, timeout,
-                       sampling_mode):
+        def read_data_mock(trans_comm_id, timeout, sampling_mode):
             error_code = ieee1451.Error(
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
-            result = 1024
-            print("read mock")
-            return (error_code, result)
+            tc = ieee1451.TypeCode.UINT32_TC
+            value = 1024
+            arg = ieee1451.Argument(tc, value)
+            arg_array = ieee1451.ArgumentArray()
+            arg_array.put_by_index(0, arg)
+            return (error_code, arg_array)
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -60,11 +62,16 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
-                'timeout': ieee1451.TimeDuration(0,1000),
+                'timeout': ieee1451.TimeDuration(0, 1000),
                 'sampling_mode': 0
                 }
 
-        expected_response = (self.no_error, 1234, 1, 1, 1024)
+        expceted_arg = ieee1451.Argument(ieee1451.TypeCode.UINT32_TC, 1024)
+        expected_arg_array = ieee1451.ArgumentArray()
+        expected_arg_array.put_by_index(0, expceted_arg)
+
+        expected_response = (self.no_error, 1234, 1, 1, expected_arg_array)
+
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
                                                     request['ncap_id'],
                                                     request['tim_id'],
@@ -75,8 +82,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
 
         tdaccs.open.assert_called_with(01, 01)
         tdaccs.read_data.assert_called_with(1,
-                                            ieee1451.TimeDuration(0,1000),
+                                            ieee1451.TimeDuration(0, 1000),
                                             0)
+
         self.assertEqual(expected_response, response)
 
     def test_write_transducer_sample_data_to_a_channel_of_a_tim(self):
@@ -100,7 +108,6 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             self.result.append(value)
             return error_code
 
-
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
         tdaccs.write_data.side_effect = write_data_mock
@@ -112,26 +119,32 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
-                'timeout': ieee1451.TimeDuration(0,1000),
+                'timeout': ieee1451.TimeDuration(0, 1000),
                 'sampling_mode': 0,
                 }
 
         expected_response = (self.no_error, 1234, 1, 1)
-        expected_output = [1024, 1025, 1026]
+        test_vals = [1024, 1025, 1026]
+        expected_output = []
 
-        for sample in expected_output:
-            response = tdas.\
-                        write_transducer_sample_data_to_a_channel_of_a_tim(
+        for sample in test_vals:
+
+            arg = ieee1451.Argument(ieee1451.TypeCode.UINT32_TC, sample)
+            arg_array = ieee1451.ArgumentArray()
+            arg_array.put_by_index(0, arg)
+
+            response = tdas.write_transducer_sample_data_to_a_channel_of_a_tim(
                                                     request['ncap_id'],
                                                     request['tim_id'],
                                                     request['channel_id'],
                                                     request['timeout'],
                                                     request['sampling_mode'],
-                                                    sample
+                                                    arg_array
                                                     )
+            expected_output.append(arg_array)
 
         tdaccs.open.assert_called_with(01, 01)
-        tdaccs.write_data.assert_called_with(1, ieee1451.TimeDuration(0,1000),
+        tdaccs.write_data.assert_called_with(1, ieee1451.TimeDuration(0, 1000),
                                              0, mock.ANY)
         self.assertEqual(expected_response, response)
         self.assertEqual(expected_output, self.result)

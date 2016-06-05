@@ -88,14 +88,21 @@ class TransducerDataAccessServices(object):
             tim_id: the id of the tim that was read
             channel_id: the id of the channel read from the TIM
         """
+
+        if type(sample_data) is not ieee1451.ArgumentArray:
+            arg_array = ieee1451.ArgumentArray()
+            arg_array.put_by_index(0, ieee1451.Argument(value=sample_data))
+        else:
+            arg_array = sample_data
+
         error_code = ieee1451.Error(
                             ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                             ieee1451.ErrorCode.NO_ERROR)
         (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
                                                                   channel_id)
-        error_code = self.transducer_access.write_data(trans_comm_id, timeout,
-                                          sampling_mode, sample_data)
+        error_code = self.transducer_access.write_data(trans_comm_id,
+                                                       timeout,
+                                                       sampling_mode,
+                                                       arg_array)
         self.transducer_access.close(trans_comm_id)
-
-
         return (error_code, ncap_id, tim_id, channel_id)
