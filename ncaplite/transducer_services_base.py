@@ -38,8 +38,8 @@ class TimDiscoveryBase(object):
         [B4] and IEEE 1451.3 multidrop).
 
         Returns:
-        error_code: an error code
-        module_ids: an array of module ids
+        ErrorCode error_code: an error code
+        UInt8Array module_ids: an array of module ids
         """
         error_code = 0
         module_ids = []
@@ -53,11 +53,11 @@ class TimDiscoveryBase(object):
         to the NCAP.
 
         Args:
-        module_id: The “moduleId” parameter is the desired IEEE 1451.X
+        UInt8 module_id: The “moduleId” parameter is the desired IEEE 1451.X
                     communication module ID. 11.6.2, the which the
         Returns:
-        error_code: an error code
-        tim_ids: a list which ontains all known TIMs on the IEEE 1451.X module.
+        ErrorCode error_code: an error code
+        UInt16Array tim_ids: a list which ontains all known TIMs on the IEEE 1451.X module.
         """
         error_code = 0
         tim_ids = []
@@ -69,13 +69,13 @@ class TimDiscoveryBase(object):
         This information is retrieved from the cached TEDS.
 
         Arga:
-        tim_id: the desired TIM.
+        UInt16 tim_id: the desired TIM.
 
         Returns:
-        error_code: an error code
-        channel_ids: is returned to the application and contains all
+        ErrorCode error_code: an error code
+        UInt16Array channel_ids: is returned to the application and contains all
                      known TransducerChannels on this TIM.
-        names: is returned to the application and contains the
+        StringArray names: is returned to the application and contains the
                Transducer Channel names.
         """
         error_code = 0
@@ -103,11 +103,11 @@ class TransducerAccessBase(object):
         The default QoS will be used.
 
         Args:
-            tim_id: ID of the desired TIM
-            channel_id: the desired transducer channel
+            UInt16 tim_id: ID of the desired TIM
+            UInt16 channel_id: the desired transducer channel
         Returns:
-            error_code: an error code
-            trans_comm_id: The transport communications id. This acts as the
+            ErrorCode error_code: an error code
+            UInt16 trans_comm_id: The transport communications id. This acts as the
             handle for the current comms session with the TIM and Channel.
             This handle will be used in subsequent method calls to
             TransducerAccess
@@ -125,20 +125,20 @@ class TransducerAccessBase(object):
         application in order to provide a “hint” on what QoS may be acceptable.
 
         Args:
-        tim_id: specifies the desired TIM.
-        channel_id: specifies the desired TransducerChannel.
+        UInt16 tim_id: specifies the desired TIM.
+        UInt16 channel_id: specifies the desired TransducerChannel.
                     This field allows addressing a single TransducerChannel,
                     a TransducerChannel proxy, a group of TransducerChannels
                     or all TransducerChannels connected to an NCAP. To address
                     the TIM use a TransducerChannel of zero.
                     See 5.3 for details.
-        qos_params: the desired quality of service parameters.
+        QosParams qos_params: the desired quality of service parameters.
                     See 9.3.1.3 for details.
         Returns:
-        error_code: an error code
-        qos_params: the desired quality of service parameters.
+        ErrorCode error_code: an error code
+        QosParams qos_params: the desired quality of service parameters.
                     See 9.3.1.3 for details.
-        trans_comm_id: The transport communications id. This acts as the
+        UInt16 trans_comm_id: The transport communications id. This acts as the
         handle for the current comms session with the TIM and Channel.
         This handle will be used in subsequent method calls to
         TransducerAccess
@@ -161,15 +161,15 @@ class TransducerAccessBase(object):
         lists are of equal length.
 
         Args:
-        tim_ids: ID of the desired TIMs
-        channel_ids: specifies the desired TransducerChannels. This field
+        UInt16Array tim_ids: ID of the desired TIMs
+        UInt16Array channel_ids: specifies the desired TransducerChannels. This field
                     allows addressing a single TransducerChannel, a
                     TransducerChannel proxy, a group of TransducerChannels,
                     or all TransducerChannels connected to an NCAP. See 5.3 for
                     details.
         Returns:
-        error_code: an error code
-        trans_comm_id: The transport communications id. This acts as the
+        ErrorCode error_code: an error code
+        UInt16 trans_comm_id: The transport communications id. This acts as the
         handle for the current comms session with the TIM and Channel.
         This handle will be used in subsequent method calls to
         TransducerAccess
@@ -191,21 +191,21 @@ class TransducerAccessBase(object):
         All TIMs must be attached to the same communication module.
 
         Args:
-        tim_ids:     specifies the desired TIMs.
-        channel_ids: specifies the desired TransducerChannels.
+        UInt16Array tim_ids:     specifies the desired TIMs.
+        UInt16Array channel_ids: specifies the desired TransducerChannels.
                     This field allows addressing a single TransducerChannel,
                     a TransducerChannel proxy, a group of TransducerChannels
                     or all TransducerChannels connected to an NCAP. To address
                     the TIM use a TransducerChannel of zero.
                     See 5.3 for details.
-        qos_params: the desired quality of service parameters.
+        QosParams qos_params: the desired quality of service parameters.
                     See 9.3.1.3 for details.
 
         Returns:
-        error_code: an error code
-        qos_params: the desired quality of service parameters.
+        ErrorCode error_code: an error code
+        QosParams qos_params: the desired quality of service parameters.
                     See 9.3.1.3 for details.
-        trans_comm_id: The transport communications id. This acts as the
+        UInt16 trans_comm_id: The transport communications id. This acts as the
         handle for the current comms session with the TIM and Channel.
         This handle will be used in subsequent method calls to
         TransducerAccess
@@ -224,7 +224,8 @@ class TransducerAccessBase(object):
         on a locked transCommId.
 
         Args:
-        The “transCommId” parameter indicates which communication to close.
+        UInt16 trans_comm_id: The transport communications id indicates which
+                                communication to close.
 
         Returns:
         error_code: an error code
@@ -269,8 +270,8 @@ class TransducerAccessBase(object):
 
 
         Returns:
-        error_code: an error_code
-        result: oputput ArgumentArray is the returned values.
+        ErrorCode error_code: an error_code
+        ArgumentArray result: oputput ArgumentArray is the returned values.
         """
         error_code = 0
         result = ()
@@ -309,18 +310,18 @@ class TransducerAccessBase(object):
         write case discussed in the previous paragraph
 
         Args:
-            trans_comm_id: indicates which transducer communication session
+        UInt16 trans_comm_id: indicates which transducer communication session
                             to use.
-            timeout: specifies how long to wait to perform the reading without
-                     generating a time-out error. Note a time-out can occur due
-                     to communication or trigger failures.
-            sampling_mode: pecifies the triggering mechanism. See 5.11 and
+        TimeDuration timeout: specifies how long to wait to perform the reading
+            without generating a time-out error. Note a time-out can occur due
+            to communication or trigger failures.
+        UInt8 sampling_mode: specifies the triggering mechanism. See 5.11 and
             7.1.2.4 for details. The “value” ArgumentArray is the provided
             actuator input values.
             value: the value to send
 
         Returns:
-        error_code: an error_code
+        ErrorCode error_code: an error_code
 
         """
         error_code = 0
@@ -335,24 +336,26 @@ class TransducerAccessBase(object):
         the callback object.
 
         Args:
-        trans_comm_id: indicates which transducer communication session to use.
-        trigger_time: specifies when to begin the read operation. A value
-                        specified in the past will result in an immediate
-                        time-out failure. A value of secs == 0, nsecs == 0 is a
-                        special case that implies read immediately.
-        timeout: specifies how long to wait after initiating the read operation
-                    without generating a time-out error. Note a time-out can
-                    occur due to communication or trigger failures.
-        sampling_mode: pecifies the triggering mechanism. See 5.11 and
+        UInt16 trans_comm_id: indicates which transducer communication session
+                                to use.
+        TimeInstance trigger_time: specifies when to begin the read operation.
+                        A value specified in the past will result in an
+                        immediate time-out failure. A value of
+                        secs == 0, nsecs == 0 is aspecial case that
+                        implies read immediately.
+        TimeDuration timeout: specifies how long to wait after initiating the
+                        read operation without generating a time-out error.
+                        Note a time-out can occur due to communication or
+                        trigger failures.
+        UInt8 sampling_mode: pecifies the triggering mechanism. See 5.11 and
                         7.1.2.4 for details. The “value” ArgumentArray
-                        is the provided
-        actuator input values.
-        callback: the interface to invoke when the read has completed.
-                  It will also be invoked upon failures.
+                        is the provided actuator input values.
+        AppCallback callback: the interface to invoke when the read has
+                            completed. It will also be invoked upon failures.
 
         Returns:
-        error_code: an error code
-        operation_id: an identifier that can be used to cancel
+        ErrorCode error_code: an error code
+        UInt16 operation_id: an identifier that can be used to cancel
                       the read request.
         """
         error_code = 0
@@ -368,23 +371,26 @@ class TransducerAccessBase(object):
         callback object.
 
         Args:
-        trans_comm_id: indicates which transducer communication session to use.
-        trigger_time: specifies when to begin the read operation. A value
-                        specified in the past will result in an immediate
-                        time-out failure. A value of secs == 0, nsecs == 0 is a
+        UInt16 trans_comm_id: indicates which transducer communication session
+                                to use.
+        TimeInstance trigger_time: specifies when to begin the read operation.
+                        A valuespecified in the past will result in an
+                        immediate time-out failure.
+                        A value of secs == 0, nsecs == 0 is a
                         special case that implies read immediately.
-        timeout: specifies how long to wait after initiating the read operation
-                    without generating a time-out error. Note a time-out can
-                    occur due to communication or trigger failures.
-        sampling_mode: pecifies the triggering mechanism. See 5.11 and
+        TimeDuration timeout: specifies how long to wait after initiating
+                    the read operation without generating a time-out error.
+                    Note a time-out can occur due to communication or trigger
+                    failures.
+        UInt8 sampling_mode: pecifies the triggering mechanism. See 5.11 and
                         7.1.2.4 for details. The “value” ArgumentArray
                         is the provided actuator input values.
-        value: the value to send
-        callback: the interface to invoke when the read has completed.
-                  It will also be invoked upon failures.
+        ArgumentArray value: the value to send
+        AppCallback callback: the interface to invoke when the read has
+                    completed. It will also be invoked upon failures.
         Returns:
-        error_code: an error code
-        operation_id: an identifier that can be used to cancel
+        ErrorCode error_code: an error code
+        UInt16 operation_id: an identifier that can be used to cancel
                       the read request.
         """
         error_code = 0
@@ -401,14 +407,15 @@ class TransducerAccessBase(object):
         on the callback object.
 
         Args:
-        trans_comm_id: indicates which transducer communication session to use.
-        callback: the interface to invoke when a data set has been written to
-                    an actuator or received from a sensor.
-                    It will also be invoked upon failures.
+        UInt16 trans_comm_id: indicates which transducer communication
+                                session to use.
+        AppCallback callback: the interface to invoke when a data set has been
+                            written to an actuator or received from a sensor.
+                            It will also be invoked upon failures.
 
         Returns:
-        error_code: an error code
-        operation_id: an identifier that can be used to cancel
+        ErrorCode error_code: an error code
+        UInt16 operation_id: an identifier that can be used to cancel
                       the read request.
 
         """
@@ -423,8 +430,10 @@ class TransducerAccessBase(object):
         error code.
 
         Args:
-        error_code: an error code
-        operation_id: specifies the operation to cancel.
+        UInt16 operation_id: specifies the operation to cancel.
+
+        Returns:
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -457,16 +466,17 @@ class TransducerManagerBase(object):
         openGroupQoS( ) call.
 
         Args:
-        trans_comm_id: specifies the desired transducer communication session.
-        timeout: specifies the duration to wait when acquiring the lock.
-                    A value of secs == 0, nsecs == 0 implies no wait and can be
-                    used to test for an existing lock. A value of secs == 0,
-                    nsecs == –1 implies wait forever. Using a value of
-                    “wait forever” is extremely dangerous as it can create
-                    deadlocks.
+        UInt16 trans_comm_id: specifies the desired transducer communication
+                            session.
+        TimeDuration timeout: specifies the duration to wait when acquiring the
+                    lock. A value of secs == 0, nsecs == 0 implies no wait and
+                    can be used to test for an existing lock.
+                    A value of secs == 0, nsecs == –1 implies wait forever.
+                    Using a value of “wait forever” is extremely dangerous as it
+                    can create deadlocks.
 
         Returns:
-        error_code: an error code
+        ErrorCode rror_code: an error code
         """
         error_code = 0
         return error_code
@@ -490,10 +500,11 @@ class TransducerManagerBase(object):
         a locked resource was performed.
 
         Args:
-        trans_comm_id: specifies the desired transducer communication session.
+        UInt16 trans_comm_id: specifies the desired transducer communication
+                                session.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -503,8 +514,8 @@ class TransducerManagerBase(object):
         """ This method will report all transCommIds that are currently locked.
 
         Returns:
-        error_code: an error code
-        trans_comm_ids: an array of locked IDs.
+        ErrorCode error_code: an error code
+        UInt16 trans_comm_ids: an array of locked IDs.
         """
         error_code = 0
         trans_comm_ids = []
@@ -517,10 +528,11 @@ class TransducerManagerBase(object):
         appropriate error code. See Table 78 for the list of error codes.
 
         Args:
-        trans_comm_id: specifies the desired transducer communication session.
+        UInt16 trans_comm_id: specifies the desired transducer communication
+                                session.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -536,17 +548,18 @@ class TransducerManagerBase(object):
         this argument array must contain the octetArray containing the command.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: the maximum time to wait before a time-out error.
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        cmd_class_id: the desired command class code. See Table 15 for details.
-        cmd_function_id: the desired command function code. See Clause 7
+        UInt8 cmd_class_id: the desired command class code. See Table 15 for
+                            details.
+        UInt8 cmd_function_id: the desired command function code. See Clause 7
                             for details.
-        in_args: the input arguments in ArgumentArray form.
+        ArgumentArray in_args: the input arguments in ArgumentArray form.
 
         Returns:
-        error_code: an error code
-        out_args: returned output arguments.
+        ErrorCode error_code: an error code
+        ArgumentArray out_args: returned output arguments.
         """
         out_args = []
         error_code = 0
@@ -563,17 +576,17 @@ class TransducerManagerBase(object):
         this argument array must contain the octetArray containing the command.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: the maximum time to wait before a time-out error.
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        cmd_class_id: the desired command class code. See Table 15 for details.
-        cmd_function_id: the desired command function code. See Clause 7
+        UInt8 cmd_class_id: the desired command class code. See Table 15 for details.
+        UInt8 cmd_function_id: the desired command function code. See Clause 7
                             for details.
-        in_args: the input arguments in OctetArray form.
+        OctetArray in_args: the input arguments in OctetArray form.
 
         Returns:
-        error_code: an error code
-        out_args: returned output arguments.
+        ErrorCode error_code: an error code
+        OctetArray out_args: returned output arguments.
         """
         out_args = []
         error_code = 0
@@ -587,22 +600,24 @@ class TransducerManagerBase(object):
         correct data types for each input argument.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        trigger_time: specifies when to begin the operation. A value specified
-                        in the past will result in an immediate time-out
-                        failure. A value of secs == 0, nsecs == 0 is a special
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeInstance trigger_time: specifies when to begin the operation.
+                        A value specified in the past will result in an
+                        immediate time-out failure. A value of
+                        secs == 0, nsecs == 0 is a special
                         case that implies immediate action.
-        timeout: the maximum time to wait before a time-out error.
+        TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        cmd_class_id: the desired command class code. See Table 15 for details.
-        cmd_function_id: the desired command function code. See Clause 7
+        UInt8 cmd_class_id: the desired command class code. See Table 15 for
+                            details.
+        UInt8 cmd_function_id: the desired command function code. See Clause 7
                             for details.
-        in_args: the input arguments in ArgumentArray form.
-        callback: specifies the callback interface.
+        ArgumentArray in_args: the input arguments in ArgumentArray form.
+        AppCallback callback: specifies the callback interface.
                     The AppCallback::commandComplete( ) method will be invoked.
         Returns:
-        error_code: an error code
-        operation_id: the returned operation ID
+        ErrorCode error_code: an error code
+        ArgumentArray operation_id: the returned operation ID
 
         """
         operation_id = 0
@@ -617,11 +632,11 @@ class TransducerManagerBase(object):
         names.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        attribute_names: specifies the names of desired attributes
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        StringArray attribute_names: specifies the names of desired attributes
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -631,20 +646,21 @@ class TransducerManagerBase(object):
         """This method performs a blocking trigger on the specified transCommId.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        trigger_time: specifies when to begin the read operation. A value
-                        specified in the past will result in an immediate
-                        time-out failure. A value of secs == 0, nsecs == 0 is a
-                        special case that implies read immediately.
-        timeout: specifies how long to wait to perform the reading without
-                 generating a time-out error. Note a time-out can occur due
-                 to communication or trigger failures.
-        sampling_mode: pecifies the triggering mechanism. See 5.11 and
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeInstance trigger_time: specifies when to begin the read operation.
+                            A value specified in the past will result in an
+                            immediate time-out failure.
+                            A value of secs == 0, nsecs == 0 is a
+                            special case that implies read immediately.
+        TimeDuration timeout: specifies how long to wait to perform the reading
+                        without generating a time-out error. Note a time-out
+                        can occur due to communication or trigger failures.
+        UInt8 sampling_mode: pecifies the triggering mechanism. See 5.11 and
         7.1.2.4 for details. The “value” ArgumentArray is the provided
         actuator input values.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -656,23 +672,24 @@ class TransducerManagerBase(object):
         transCommId.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        trigger_time: specifies when to begin the read operation. A value
-                        specified in the past will result in an immediate
-                        time-out failure. A value of secs == 0, nsecs == 0 is a
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeInstance trigger_time: specifies when to begin the read operation.
+                        A value specified in the past will result in an
+                        immediate time-out failure.
+                        A value of secs == 0, nsecs == 0 is a
                         special case that implies read immediately.
-        timeout: specifies how long to wait to perform the reading without
-                 generating a time-out error. Note a time-out can occur due
-                 to communication or trigger failures.
-        sampling_mode: pecifies the triggering mechanism. See 5.11 and
+        TimeDuration timeout: specifies how long to wait to perform the reading
+                    without generating a time-out error. Note a time-out can
+                    occur due to communication or trigger failures.
+        UInt8 sampling_mode: pecifies the triggering mechanism. See 5.11 and
                         7.1.2.4 for details. The “value” ArgumentArray is the
                         provided actuator input values
-        callback: the interface to invoke when the read has completed.
-                  It will also be invoked upon failures.
+        AppCallback callback: the interface to invoke when the read has
+                    completed. It will also be invoked upon failures.
 
         Returns:
-        error_code: an error code
-        operation_id: an identifier that can be used to cancel
+        ErrorCode error_code: an error code
+        UInt16 operation_id: an identifier that can be used to cancel
                       the read request.
         """
         operation_id = 0
@@ -684,21 +701,23 @@ class TransducerManagerBase(object):
         """ This method performs a clear on the specified transCommId.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: the maximum time to wait before a time-out error.
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        clear_mode: The “clearMode” specifies the clear mode as shown below
-                    0: Reserved
-                    1: Clear All
-                    2: Clear communications channel
-                    3: Clear buffers
-                    4: Reset TIM state machine
-                    5: Clear TEDS cache
-                    6-127: Reserved
-                    128-255: Open to manufacturers
+        UInt8 clear_mode: The “clearMode” specifies the clear mode as shown
+                            below
+
+                        0: Reserved
+                        1: Clear All
+                        2: Clear communications channel
+                        3: Clear buffers
+                        4: Reset TIM state machine
+                        5: Clear TEDS cache
+                        6-127: Reserved
+                        128-255: Open to manufacturers
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -709,14 +728,14 @@ class TransducerManagerBase(object):
         events on the specified transCommId.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: the maximum time to wait before a time-out error.
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        callback: specifies the callback interface.
+        AppCallback : specifies the callback interface.
                     The AppCallback::statusChange( ) method will be invoked.
         Returns:
-        error_code: an error code
-        operation_id: the returned operation ID
+        ErrorCode rror_code: an error code
+        UInt16 operation_id: the returned operation ID
         """
         operation_id = 0
         error_code = 0
@@ -728,10 +747,10 @@ class TransducerManagerBase(object):
         change events on the specified transCommId.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
+        UInt16 trans_comm_id: specifies the transducer communication session.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -752,20 +771,20 @@ class TedsManagerBase(object):
         the TIM. The TEDS information is returned in an ArgumentArray.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: specifies the duration to wait before returning a time-out
-                    error if no response is received. A value of secs == 0,
-                    nsecs == 0 implies no wait and may be used to only read
-                    from the cache. A value of secs == 0, nsecs == –1 implies
-                    wait forever.
-        teds_type:  specifies what TEDS to return. See Table 17 for TEDS
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: specifies the duration to wait before returning
+                    a time-out error if no response is received.
+                    A value of secs == 0, nsecs == 0 implies no wait and may be
+                    used to only read from the cache.
+                    A value of secs == 0, nsecs == –1 implies wait forever.
+        UInt8 teds_type:  specifies what TEDS to return. See Table 17 for TEDS
                     access codes.
 
         Returns:
-        error_code: an error code
-        teds: ArgumentArray that contains the TEDS information. The values may
-                be retrieved by attribute name.
-                See Clause 8 for TEDS field names.
+        ErrorCode rror_code: an error code
+        ArgumentArray teds: ArgumentArray that contains the TEDS information.
+                            The values may be retrieved by attribute name.
+                            See Clause 8 for TEDS field names.
 
         """
         error_code = 0
@@ -785,17 +804,20 @@ class TedsManagerBase(object):
         TEDS field is missing.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: specifies the duration to wait before returning a time-out
-                    error if no response is received. A value of secs == 0,
-                    nsecs == 0 implies no wait and may be used to only read
-                    from the cache. A value of secs == 0, nsecs == –1 implies
-                    wait forever.
-        teds_type:  specifies what TEDS to return. See Table 17 for TEDS
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: specifies the duration to wait before returning
+                    a time-out error if no response is received. A value of
+                    secs == 0, nsecs == 0 implies no wait and may be used to
+                    only read from the cache. A value of secs == 0, nsecs == –1
+                    implies wait forever.
+        UInt8 teds_type:  specifies what TEDS to return. See Table 17 for TEDS
                     access codes.
+        ArgumentArray teds: ArgumentArray contains the TEDS information.
+                            The values may be retrieved by attribute name.
+                            See Clause 8 for TEDS field names.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -807,18 +829,18 @@ class TedsManagerBase(object):
          form. The TEDS cache will not be updated.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: specifies the duration to wait before returning a time-out
-                    error if no response is received. A value of secs == 0,
-                    nsecs == 0 implies no wait and may be used to only read
-                    from the cache. A value of secs == 0, nsecs == –1 implies
-                    wait forever.
-        teds_type:  specifies what TEDS to return. See Table 17 for TEDS
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: specifies the duration to wait before returning a
+                    time-out error if no response is received.
+                    A value of secs == 0, nsecs == 0 implies no wait and may
+                    be used to only read from the cache.
+                    A value of secs == 0, nsecs == –1 implies wait forever.
+        UInt8 teds_type:  specifies what TEDS to return. See Table 17 for TEDS
                     access codes.
 
         Returns:
-        error_code: an error code
-        raw_teds: OctetArray contains the raw TEDS information in “tuple” form.
+        ErrorCode error_code: an error code
+        OctetArray raw_teds: OctetArray contains the raw TEDS information in “tuple” form.
         """
         error_code = 0
         raw_teds = ()
@@ -836,18 +858,19 @@ class TedsManagerBase(object):
         what is written by this method will replace the entire TEDS.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: specifies the duration to wait before returning a time-out
-                    error if no response is received. A value of secs == 0,
-                    nsecs == 0 implies no wait and may be used to only read
-                    from the cache. A value of secs == 0, nsecs == –1 implies
-                    wait forever.
-        teds_type:  specifies what TEDS to return. See Table 17 for TEDS
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: specifies the duration to wait before returning
+                    a time-out error if no response is received.
+                    A value of secs == 0, nsecs == 0 implies no wait and may
+                    be used to only read from the cache.
+                    A value of secs == 0, nsecs == –1 implies wait forever.
+        UInt8 teds_type:  specifies what TEDS to return. See Table 17 for TEDS
                     access codes.
-        raw_teds: OctetArray contains the raw TEDS information in “tuple” form.
+        OctetArray raw_teds: OctetArray contains the raw TEDS information in
+                            “tuple” form.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -860,17 +883,17 @@ class TedsManagerBase(object):
         in the cache.
 
         Args:
-        trans_comm_id: specifies the transducer communication session.
-        timeout: specifies the duration to wait before returning a time-out
-                    error if no response is received. A value of secs == 0,
-                    nsecs == 0 implies no wait and may be used to only read
-                    from the cache. A value of secs == 0, nsecs == –1 implies
-                    wait forever.
-        teds_type:  specifies what TEDS to return. See Table 17 for TEDS
+        UInt16 trans_comm_id: specifies the transducer communication session.
+        TimeDuration timeout: specifies the duration to wait before returning a
+                    time-out error if no response is received.
+                    A value of secs == 0, nsecs == 0 implies no wait and may be
+                    used to only read from the cache.
+                    A value of secs == 0, nsecs == –1 implies wait forever.
+        UInt8 teds_type:  specifies what TEDS to return. See Table 17 for TEDS
                     access codes.
 
         Returns:
-        error_code: an error code
+        ErrorCode error_code: an error code
         """
         error_code = 0
         return error_code
@@ -896,16 +919,17 @@ class CommManagerBase(object):
         the IEEE 1451.0 architecture.
 
         Args:
-        module_id: the desired communications module ID.
+        UInt8 module_id: the desired communications module ID.
 
         Returns:
-        error_code: an error code
-        comm_object: a reference to the underlying comms object.
-        comm_type: “type” parameter is returned to the application in order to
-                    allow a safe downcast. Valid values are represented in the
-                    technology_id which specifies the underlying IEEE 1451.X
-                    technology. See Table 90.
-        technology_id: specifies the underlying IEEE 1451.X technology.
+        ErrorCode rror_code: an error code
+        ModuleCommunication comm_object: a reference to the underlying comms
+                                        object.
+        UInt8 comm_type: “type” parameter is returned to the application in
+                    order to allow a safe downcast. Valid values are
+                    represented in the technology_id which specifies the
+                    underlying IEEE 1451.X technology. See Table 90.
+        UInt8 technology_id: specifies the underlying IEEE 1451.X technology.
                         See Table 99
 
         Table 90: Comm type enumerations
@@ -935,18 +959,19 @@ class ApiCallbackBase(object):
         callback will be invoked every time new measurement data are available.
 
         Args:
-        operation_id: the desired operation ID that was returned in the
+        UInt16 operation_id: the desired operation ID that was returned in the
                       startRead( ) or startStream( ) call.
-        meas_values: contains the measurement information.
+        ArgumentArray meas_values: contains the measurement information.
                         The values may be retrieved by attribute name.
                         See Clause 7 for attribute names. See 10.2.6 read( )
                         for more details
-        status: specifies the error code from the non-blocking read or stream
-                operation
+        UInt16 status: specifies the error code from the non-blocking read or
+                        stream operation
 
         Returns:
-        error_code: The application shall return a status code back to the
-                    IEEE 1451.0 layer. See 9.3.1.2 for error codes.
+        ErrorCode error_code: The application shall return a status code back
+                            to the IEEE 1451.0 layer. See 9.3.1.2 for
+                            error codes.
         """
         error_code = 0
         return error_code
@@ -958,13 +983,14 @@ class ApiCallbackBase(object):
         application.
 
         Args:
-        operation_id: the desired operation ID that was returned in the
+        UInt16 operation_id: the desired operation ID that was returned in the
                         startWrite( ) call.
-        status: specifies the error code from the non-blocking write operation
+        UInt16 status: specifies the error code from the non-blocking write
+                        operation
 
         Returns:
-        error_code: The application shall return a status code back to the
-                    IEEE 1451.0 layer. See 9.3.1.2 for error codes.
+        ErrorCode error_code: The application shall return a status code back
+                        to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
         return error_code
@@ -974,14 +1000,15 @@ class ApiCallbackBase(object):
         """This method will be invoked following a registerStatusChange( ) call.
 
         Args:
-        operation_id: specifies the desired operation ID that was returned in
-                        the registerStatusChange( ) call.
+        UInt16 operation_id: specifies the desired operation ID that was
+                    returned in the registerStatusChange( ) call.
 
-        status: specifies the TIM or TransducerChannel status information.
+        UInt16 status: specifies the TIM or TransducerChannel status
+                        information.
 
         Returns:
-        error_code: The application shall return a status code back to the
-                    IEEE 1451.0 layer. See 9.3.1.2 for error codes.
+        ErrorCode error_code: The application shall return a status code back
+                        to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
         return error_code
@@ -992,16 +1019,16 @@ class ApiCallbackBase(object):
         It provides the output ArgumentArray back to the application.
 
         Args:
-        operation_id: specifies the desired operation ID that was returned in
-                        the startRead( ) or startStream( ) call.
-        out_args: contains the returned ArgumentArray. This informationis
-                    specific to each command.
-        status: specifies the error code from the non-blocking
+        UInt16 operation_id: specifies the desired operation ID that was
+                            returned in the startRead( ) or startStream( ) call.
+        ArgumentArray out_args: contains the returned ArgumentArray.
+                            This informationis specific to each command.
+        UInt16 status: specifies the error code from the non-blocking
                     send command operation..
 
         Returns:
-        error_code: The application shall return a status code back to the
-                    IEEE 1451.0 layer. See 9.3.1.2 for error codes.
+        ErrorCode error_code: The application shall return a status code back
+                        to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
 
         """
         error_code = 0
@@ -1014,14 +1041,14 @@ class ApiCallbackBase(object):
         completed.
 
         Args:
-        operation_id: specifies the desired operation ID that was returned in
-                        the startTrigger( ) call.
-        status: specifies the error code from the non-blocking trigger
+        UInt16 operation_id: specifies the desired operation ID that was
+            returned in the startTrigger( ) call.
+        UInt16 status: specifies the error code from the non-blocking trigger
                     command operation.
 
         Returns:
-        error_code: The application shall return a status code back to the
-                    IEEE 1451.0 layer. See 9.3.1.2 for error codes.
+        ErrorCode error_code: The application shall return a status code back
+                    to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
         return error_code
