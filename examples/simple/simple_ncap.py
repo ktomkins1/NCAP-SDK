@@ -6,11 +6,17 @@ from ncaplite import network_interface
 from ncaplite import discovery_services
 from ncaplite import transducer_data_access_services
 import simple_transducer_service
+import logging
+import logging.config
+import sys
+
+logger = logging.getLogger(__name__)
 
 
-if __name__ == '__main__':
+def main():
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-    print("Running Simple NCAP Demo...")
+    logger.info("Running Simple NCAP Demo...")
 
     config_file_path = 'ncapconfig.xml'
 
@@ -50,3 +56,6 @@ if __name__ == '__main__':
 
     # start the ncap server
     ncap.start()
+
+if __name__ == '__main__':
+    main()

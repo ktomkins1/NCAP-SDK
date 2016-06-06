@@ -9,7 +9,11 @@
 
 """
 from ncaplite.transducer_services_base import TransducerAccessBase
+import ncaplite.ieee1451types as ieee1451
 import RPi.GPIO as GPIO
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class TransducerAccessBlinky(TransducerAccessBase):
@@ -50,79 +54,86 @@ class TransducerAccessBlinky(TransducerAccessBase):
         return 0  # assumes 0 not valid comid
 
     def open(self, tim_id, channel_id):
+        logger.debug("TransducerAccessBlinky.open")
         trans_comm_id = self.find_com_id(tim_id, channel_id)
+        logger.debug("TransducerAccessBlinky.open trans_comm_id: " +
+                     str(trans_comm_id))
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         return (error_code, trans_comm_id)
 
     def open_qos(self, tim_id, channel_id, qos_params):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         qos_params = ()
         trans_comm_id = 0
         return (error_code, qos_params, trans_comm_id)
 
     def open_group(self, tim_ids, channel_ids):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         trans_comm_id = 0
         return (error_code, trans_comm_id)
 
     def open_group_qos(self, tim_ids, channel_ids, qos_params):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         qos_params = ()
         trans_comm_id = 0
         return (error_code, qos_params, trans_comm_id)
 
     def close(self, trans_comm_id):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
     def read_data(self, trans_comm_id, timeout, sampling_mode):
+        logger.debug("TransducerAccessBlinky.read_data")
         # lookup pin and check state
         data = GPIO.input(self.led_pins[trans_comm_id])
         # append to result list
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
-        result = data
-        return (error_code, result)
+                                    ieee1451.ErrorCode.NO_ERROR)
+        arg = ieee1451.Argument(ieee1451.TypeCode.BOOLEAN_TC, data)
+        arg_array = ieee1451.ArgumentArray()
+        arg_array.put_by_index(0, arg)
+        return (error_code, arg_array)
 
     def write_data(self, trans_comm_id, timeout, sampling_mode, value):
+        logger.debug("TransducerAccessBlinky.write_data")
         pin = self.led_pins[trans_comm_id]
 
-        if(value):
+        if(value.get_by_index(0).value):
             GPIO.output(pin, GPIO.HIGH)
         else:
             GPIO.output(pin, GPIO.LOW)
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
     def start_read_data(self, trans_comm_id, trigger_time, timeout,
                         sampling_mode, callback):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def start_write_data(self, trans_comm_id, trigger_time, timeout,
                          sampling_mode, value, callback):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def start_stream(self, trans_comm_id, callback, operation_id):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         operation_id = 0
         return (error_code, operation_id)
 
     def cancel(self, operation_id):
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                            ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
         return error_code
 
 if __name__ == '__main__':

@@ -6,11 +6,15 @@ from ncaplite import network_interface
 from ncaplite import discovery_services
 from ncaplite import transducer_data_access_services
 import blinky_transducer_service
+import logging
+import logging.config
+import sys
 
+logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-
-    print("Starting NCAP Blinky Demo...")
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    logger.info("Starting NCAP Blinky Demo...")
 
     config_file_path = 'ncapconfig.xml'
 
