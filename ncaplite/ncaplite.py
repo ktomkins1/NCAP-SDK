@@ -13,10 +13,11 @@
 # by default. To ensure that Unicode is handled properly
 # throughout SleekXMPP, we will set the default encoding
 # ourselves to UTF-8.
-
+import logging
 import xml.etree.ElementTree as ET
 import thread
 
+logger = logging.getLogger(__name__)
 
 class NCAP(object):
     """ This class defines an NCAP instance.
@@ -47,7 +48,7 @@ class NCAP(object):
         self.message_handlers = {}
 
     def load_config(self, config_file_path='ncapconfig.xml'):
-
+        logger.debug('NCAP.load_config')
         tree = ET.parse(config_file_path)
         root = tree.getroot()
         self.roster_file_path = root.find('roster_path').text
@@ -65,6 +66,7 @@ class NCAP(object):
                                    find('manufacturer_id').text)
 
     def register_network_interface(self, network_interface):
+        logger.debug('NCAP.register_network_interface')
         self.network_interface = network_interface
         self.network_interface.add_event_handler(
                             "session_start", self.on_network_if_session_start)
@@ -72,12 +74,13 @@ class NCAP(object):
                                         "message", self.on_network_if_message)
 
     def register_discovery_service(self, discovery):
+        logger.debug('NCAP.register_network_interface')
         self.discovery_service = discovery
-
         self.message_handlers[7108] = self.discovery_service.ncap_client_join
         self.message_handlers[7109] = self.discovery_service.ncap_client_unjoin
 
     def register_transducer_data_access_service(self, transducer_access):
+        logger.debug('NCAP.register_transducer_data_access_service')
         self.transducer_access = transducer_access
         self.message_handlers[7211] = self.transducer_access.\
             read_transducer_sample_data_from_a_channel_of_a_tim
@@ -85,9 +88,11 @@ class NCAP(object):
             write_transducer_sample_data_to_a_channel_of_a_tim
 
     def start(self):
+        logger.debug('NCAP.start')
         self.network_interface.run()
 
     def stop(self):
+        logger.debug('NCAP.stop')
         self.network_interface.disconnect()
 
     def on_network_if_message(self, msg):
@@ -95,6 +100,7 @@ class NCAP(object):
         Callback for network interface message
         :return:
         """
+        logger.debug('NCAP.on_network_if_message')
         if msg['type'] in ('chat', 'normal'):
             if self.type == "server":
                 self.handle_message(msg)
@@ -104,6 +110,7 @@ class NCAP(object):
         Callback for start of new session on the network interface
         :return:
         """
+        logger.debug('NCAP.on_network_if_session_start')
         self.network_interface.send_presence()
         self.network_interface.get_roster()
 
@@ -114,6 +121,7 @@ class NCAP(object):
         Args:
             msg: a message passed down from the NetworkClient
         """
+        logger.debug('NCAP.handle_message')
         sender = ('from', msg['from'])
         request = self.network_interface.parse_inbound(msg['body'])
 
@@ -121,6 +129,7 @@ class NCAP(object):
         if request[0] in [7108, 7109]:
             request = (request[0], sender[1])
 
+        logger.debug('NCAP.handle_message: '+str(request))
         thread.start_new_thread(self.handler_thread,
                                 (request,
                                  sender,
@@ -142,10 +151,14 @@ class NCAP(object):
                          appropriate 1451-1 service.
         """
         try:
+            logger.debug('NCAP.handler_thread')
             response = function(*request[1:])
             msg = str(request[0]) + \
                 ',' + self.network_interface.parse_outbound(response)
+
+            logger.debug('NCAP.handler_thread response: '+str(msg))
+
             self.network_interface.send_message(
                             mto=str(sender_info[1]), mbody=msg, mtype='chat')
         except Exception as e:
-            print("Exception: "+str(e))
+            logger.error("NCAP.handler_thread Exception: "+str(e))
