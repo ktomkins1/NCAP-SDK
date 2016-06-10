@@ -27,17 +27,20 @@ class TimeRepresentation(object):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
 
+
 class TimeDuration(TimeRepresentation):
     """Defines the IEEE1451.0 TimeDuration"""
     def __init__(self, secs, nsecs):
         self.secs = secs
         self.nsecs = nsecs
 
+
 class TimeInstance(TimeRepresentation):
     """Defines the IEEE1451.0 TimeInstance"""
     def __init__(self, secs, nsecs):
         self.secs = secs
         self.nsecs = nsecs
+
 
 class ErrorSource (Enum):
     """Defines the IEEE1451 Error Source Enumerations."""
