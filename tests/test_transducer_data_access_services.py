@@ -73,12 +73,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         expected_response = (self.no_error, 1234, 1, 1, expected_arg_array)
 
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
-                                                    request['ncap_id'],
-                                                    request['tim_id'],
-                                                    request['channel_id'],
-                                                    request['timeout'],
-                                                    request['sampling_mode'],
-                                                    )
+                                                    **request)
 
         tdaccs.open.assert_called_with(01, 01)
         tdaccs.read_data.assert_called_with(1,
@@ -121,6 +116,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'channel_id': 01,
                 'timeout': ieee1451.TimeDuration(0, 1000),
                 'sampling_mode': 0,
+                'sample_data': None
                 }
 
         expected_response = (self.no_error, 1234, 1, 1)
@@ -132,15 +128,9 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             arg = ieee1451.Argument(ieee1451.TypeCode.UINT32_TC, sample)
             arg_array = ieee1451.ArgumentArray()
             arg_array.put_by_index(0, arg)
-
+            request['sample_data'] = arg_array
             response = tdas.write_transducer_sample_data_to_a_channel_of_a_tim(
-                                                    request['ncap_id'],
-                                                    request['tim_id'],
-                                                    request['channel_id'],
-                                                    request['timeout'],
-                                                    request['sampling_mode'],
-                                                    arg_array
-                                                    )
+                                                                    **request)
             expected_output.append(arg_array)
 
         tdaccs.open.assert_called_with(01, 01)

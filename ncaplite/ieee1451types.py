@@ -7,13 +7,37 @@
 .. moduleauthor:: James Ethridge <jeethridge@gmail.com>
 
 """
-from collections import namedtuple
 from enum import Enum
 
-TimeRepresentation = namedtuple('TimeRepresentation', ['secs', 'nsecs'])
-TimeDuration = namedtuple('TimeDuration', ['secs', 'nsecs'])
-Error = namedtuple('Error', ['source', 'code'])
 
+class TimeRepresentation(object):
+    """Defines the IEEE1451.0 TimeRepresentation"""
+    def __init__(self, secs, nsecs):
+        self.secs = secs
+        self.nsecs = nsecs
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        """Override equality operation."""
+        return self.__dict__ == other.__dict__
+
+    def __cmp__(self, other):
+        """Override comparison operation."""
+        return self.__dict__ == other.__dict__
+
+class TimeDuration(TimeRepresentation):
+    """Defines the IEEE1451.0 TimeDuration"""
+    def __init__(self, secs, nsecs):
+        self.secs = secs
+        self.nsecs = nsecs
+
+class TimeInstance(TimeRepresentation):
+    """Defines the IEEE1451.0 TimeInstance"""
+    def __init__(self, secs, nsecs):
+        self.secs = secs
+        self.nsecs = nsecs
 
 class ErrorSource (Enum):
     """Defines the IEEE1451 Error Source Enumerations."""
@@ -47,6 +71,24 @@ class ErrorCode(Enum):
     LOCK_BROKEN = 18
     NETWORK_RESOURCE_EXCEEDED = 19
     MEMORY_RESOURCE_EXCEEDED = 20
+
+
+class Error(object):
+    """Defines a container class for IEEE1451.0 Errors"""
+    def __init__(self, source, code):
+        self.source = source
+        self.code = code
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        """Override equality operation."""
+        return self.__dict__ == other.__dict__
+
+    def __cmp__(self, other):
+        """Override comparison operation."""
+        return self.__dict__ == other.__dict__
 
 
 class TypeCode(Enum):

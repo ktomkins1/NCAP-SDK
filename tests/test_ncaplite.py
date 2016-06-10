@@ -20,6 +20,11 @@ import mock
 import time
 import xml.etree.ElementTree as ET
 import os
+import logging
+import logging.config
+import sys
+
+logger = logging.getLogger(__name__)
 
 
 class TestNcaplite(unittest.TestCase):
@@ -35,6 +40,7 @@ class TestNcaplite(unittest.TestCase):
         else:
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
+            logging.basicConfig(filename="ncaplite.log", level=logging.DEBUG)
 
         # generate a roster xml file for testing
         root = ET.Element("roster")
