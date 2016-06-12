@@ -46,6 +46,7 @@ class TestNcaplite(unittest.TestCase):
         root = ET.Element("roster")
         tree = ET.ElementTree(root)
         tree.write("tests/testroster.xml")
+        self.codec = network_interface.DefaultCodec()
 
     def tearDown(self):
         """Teardown for NCAP unit tests"""
@@ -205,7 +206,7 @@ class TestNcaplite(unittest.TestCase):
             return (error_code, arg_array)
 
         def client_on_data(msg):
-            resp = network_interface.NetworkClient.parse_inbound(msg['body'])
+            resp = self.codec.decode(msg['body'])
             self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
@@ -276,7 +277,7 @@ class TestNcaplite(unittest.TestCase):
             return error_code
 
         def client_on_data(msg):
-            resp = network_interface.NetworkClient.parse_inbound(msg['body'])
+            resp = self.codec.decode(msg['body'])
             self.actual_response = resp
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)

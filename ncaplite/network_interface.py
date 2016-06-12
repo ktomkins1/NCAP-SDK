@@ -19,6 +19,58 @@ else:
     raw_input = input
 
 
+class DefaultCodec():
+    """The default codec for IEEE1451-1 messages"""
+    def encode(self, msg):
+        """ Encode a response returned by a IEEE1457-1 function into
+        a properly formatted string for sending via the
+        network interface """
+        x = msg
+
+        x = [[i.source.value, i.code.value]
+             if type(i) is ieee1451.Error else i for i in x]
+
+        x = [i.to_tuple()
+             if type(i) is ieee1451.ArgumentArray else i for i in x]
+
+        # make lists and tuples semicolon delimited
+        x = [';'.join(map(str, i)) if((type(i) is list) or (type(i) is tuple))
+             else i for i in x]
+
+        # make x a tuple
+        x = tuple(x)
+        # turn into a string
+        x = str(x)
+        # remove all superfluous chars and whitespace from string
+        x = x.replace("'", "")
+        x = x.replace("(", "")
+        x = x.replace(")", "")
+        x = "".join(x.split()).rstrip(',')
+        return x
+        return ""
+
+    def decode(self, msg):
+        """ Decode an inbound message from the network interface
+        into arguments for an IEEE1457-1 request"""
+        ml = msg.split(",")
+        for n, i in enumerate(ml):
+            if(';' in i):
+                y = i.split(';')
+                ml[n] = [self.tryeval(i) for i in y]
+            else:
+                ml[n] = self.tryeval(i)
+        return(tuple(ml))
+
+    def tryeval(self, val):
+        """ Try to evalauate the input as python literal.
+        Helper function for parsing. """
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
+        return val
+
+
 class NetworkClient(sleekxmpp.ClientXMPP):
     """
     A client that implements the 1451-4 interface
@@ -40,6 +92,7 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         self.register_plugin('xep_0060')  # PubSub
         self.register_plugin('xep_0199')  # XMPP Ping
         self.broker_address = broker_address
+        self.codec = DefaultCodec()
 
     def run(self):
         # Connect to the XMPP server and start processing XMPP stanzas.
@@ -49,54 +102,12 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         else:
             print("Unable to connect.")
 
-    @staticmethod
-    def tryeval(val):
-        """ Try to evalauate the input as python literal.
-        Helper function for parsing. """
-        try:
-            val = ast.literal_eval(val)
-        except ValueError:
-            pass
-        return val
+    def parse_inbound(self, msg):
+        """Use the codec bound to this object to
+        decode/parse an inbound message"""
+        return self.codec.decode(msg)
 
-    @staticmethod
-    def parse_inbound(msg):
-        """ Parse an inbound message from the network interface
-        into a tuple of arguments for an IEEE1457-1 function """
-        ml = msg.split(",")
-        for n, i in enumerate(ml):
-            if(';' in i):
-                y = i.split(';')
-                ml[n] = [NetworkClient.tryeval(i) for i in y]
-            else:
-                ml[n] = NetworkClient.tryeval(i)
-        return(tuple(ml))
-
-    @staticmethod
-    def parse_outbound(msg):
-        """ Parse a tuple returned by a IEEE1457-1 function into
-        a properly formatted string for sending via the
-        network interface """
-        x = msg
-
-        x = [[i.source.value, i.code.value]
-             if type(i) is ieee1451.Error else i for i in x]
-
-        x = [i.to_tuple()
-             if type(i) is ieee1451.ArgumentArray else i for i in x]
-
-        # make lists and tuples semicolon delimited
-        x = [';'.join(map(str, i))
-            if((type(i) is list) or (type(i) is tuple))
-             else i for i in x]
-
-        # make x a tuple
-        x = tuple(x)
-        # turn into a string
-        x = str(x)
-        # remove all superfluous chars and whitespace from string
-        x = x.replace("'", "")
-        x = x.replace("(", "")
-        x = x.replace(")", "")
-        x = "".join(x.split()).rstrip(',')
-        return x
+    def parse_outbound(self, msg):
+        """Use the codec bound to this object to
+        encode/parse an outbound message"""
+        return self.codec.encode(msg)

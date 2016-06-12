@@ -31,6 +31,8 @@ class TestNetworkInterface(unittest.TestCase):
             self.config_file_path = 'tests/devconfig.xml'
             self.test_broker_ip = '10.10.100.4'
 
+        self.codec = network_interface.DefaultCodec()
+
     def tearDown(self):
         pass
 
@@ -39,8 +41,7 @@ class TestNetworkInterface(unittest.TestCase):
 
         test_msg = (1, 2, 3, [4, 5, 6], 7)
         expected_output = "1,2,3,4;5;6,7"
-        actual_output = network_interface.NetworkClient.parse_outbound(
-                                                                    test_msg)
+        actual_output = self.codec.encode(test_msg)
         self.assertEqual(expected_output, actual_output)
 
     def test_parse_inbound_simple_request(self):
@@ -48,8 +49,7 @@ class TestNetworkInterface(unittest.TestCase):
 
         test_msg = "1,2,3,4,5,6,7"
         expected_output = (1, 2, 3, 4, 5, 6, 7)
-        actual_output = network_interface.NetworkClient.parse_inbound(
-                                                                    test_msg)
+        actual_output = self.codec.decode(test_msg)
 
         self.assertEqual(expected_output, actual_output)
 
@@ -57,18 +57,16 @@ class TestNetworkInterface(unittest.TestCase):
         """ Test inbound message parsing of requests with lists """
         test_msg = "1,2,3,4;5;6,7"
         expected_output = (1, 2, 3, [4, 5, 6], 7)
-        actual_output = network_interface.NetworkClient.parse_inbound(
-                                                                    test_msg)
+        actual_output = self.codec.decode(test_msg)
 
         self.assertEqual(expected_output, actual_output)
 
     def test_parse_outbound_with_error_code(self):
         """ Test outbound message parsing """
         error_code = ieee1451.Error(ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
-                                     ieee1451.ErrorCode.NO_ERROR)
+                                    ieee1451.ErrorCode.NO_ERROR)
 
         test_msg = (1, error_code, 3, [4, 5, 6], 7)
         expected_output = "1,0;0,3,4;5;6,7"
-        actual_output = network_interface.NetworkClient.parse_outbound(
-                                                                    test_msg)
+        actual_output = self.codec.encode(test_msg)
         self.assertEqual(expected_output, actual_output)
