@@ -138,9 +138,25 @@ class Argument(object):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
 
+    def __str__(self):
+        """Override to __str__ to return dict as string"""
+        return str(self.__dict__)
+
+    def serializable(self):
+        """Return the Argument in a serializable format"""
+        return {'type_code': str(self.type_code), 'value': self.value}
+
+    @staticmethod
+    def from_serializable(s):
+        """Initialize an argument from it's serializable format"""
+        tc = TypeCode[s['type_code']]
+        val = s['value']
+        return Argument(type_code=tc, value=val)
+
+
 
 class ArgumentArray(object):
-    """Defines argument array"""
+    """Defines ArgumentArray from 1451.0 standard"""
 
     def __init__(self):
         self.arguments = dict()
@@ -149,10 +165,28 @@ class ArgumentArray(object):
     def __eq__(self, other):
         """Override equality operation."""
         return self.__dict__ == other.__dict__
+        # result = False
+        # if((type(self) == type(other)) and
+        #    (self.arguments == other.arguments) and
+        #    (self.indicies == other.indicies)):
+        #     result = True
+        #
+        # return result
 
     def __cmp__(self, other):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
+        # result = False
+        # if((type(self) == type(other)) and
+        #    (self.arguments == other.arguments) and
+        #    (self.indicies == other.indicies)):
+        #     result = True
+        #
+        # return result
+
+    def __str__(self):
+        """Override __str__ method."""
+        return str(self.serializable())
 
     def get_by_name(self, name):
         index = self.indicies[name]
@@ -198,3 +232,36 @@ class ArgumentArray(object):
         s = sorted(self.arguments.items(), key=lambda t: t[0])
         [result.append(entry[1].value) for entry in s]
         return tuple(result)
+
+    def serializable(self):
+        """Return the ArgumentArray in a serializable format"""
+        s = sorted(self.arguments.items(), key=lambda t: t[0])
+        arglist = []
+        result = {type(self).__name__: arglist}
+        for entry in s:
+            name = self.find_name_by_index(entry[0])
+            if(name is None):
+                name = ""
+            arg = entry[1].serializable()
+            arg['name'] = name
+            result[type(self).__name__].append(arg)
+        return result
+
+    @staticmethod
+    def from_serializable(s):
+        """Initialize the object from the serializable format"""
+        aa = ArgumentArray()
+        for i, sarg in enumerate(s['ArgumentArray']):
+            arg = Argument.from_serializable(sarg)
+            aa.put_by_index(i, arg)
+            if sarg['name']:
+                aa.indicies[sarg['name']] = i
+        return aa
+
+    def find_name_by_index(self, idx):
+        """If an item has a name, find it by index"""
+        result = None
+        for key, value in iter(self.indicies.items()):
+            if value == idx:
+                result = key
+        return result

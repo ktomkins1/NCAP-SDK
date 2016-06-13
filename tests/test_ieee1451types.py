@@ -44,6 +44,33 @@ class TestIEEE1451Types(unittest.TestCase):
         assert(arg.value == val)
         assert(arg.type_code == tc)
 
+    def test_argument_to_serializable(self):
+        """Test conversion of argument to serializable format"""
+        tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
+        val = (3.14159, 1.2345, 0.6789)
+
+        arg = ieee1451.Argument(tc, val)
+
+        s = arg.serializable()
+
+        expected_output = {
+                           'type_code': 'FLOAT32_ARRAY_TC',
+                           'value': (3.14159, 1.2345, 0.6789)}
+
+        self.assertEqual(expected_output, s)
+
+    def test_argument_from_serializable(self):
+        tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
+        val = (3.14159, 1.2345, 0.6789)
+        expected = ieee1451.Argument(tc, val)
+
+        s = {'type_code': 'FLOAT32_ARRAY_TC',
+             'value': (3.14159, 1.2345, 0.6789)}
+
+        actual = ieee1451.Argument.from_serializable(s)
+
+        self.assertEqual(expected, actual)
+
     def test_argarray_putget_by_index(self):
         """Test ArgumentArray put/get by index."""
 
@@ -174,7 +201,7 @@ class TestIEEE1451Types(unittest.TestCase):
         self.assertEquals(aa1, aa2)
 
     def test_argarray_to_tuple(self):
-        """Test ArgumentArray.to_list"""
+        """Test ArgumentArray.to_list."""
         tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
         vals = (1024.1111, 1025.2222, 1026.3333)
         arg = ieee1451.Argument(tc, vals)
@@ -182,6 +209,67 @@ class TestIEEE1451Types(unittest.TestCase):
         aa.put_by_name("MyArg", arg)
         result = aa.to_tuple()
         self.assertEqual(vals, result[0])
+
+    def test_argarray_find_name_by_index(self):
+        """Test finding the name or an argument by it's index in
+        an ArgumentArray"""
+        tc = ieee1451.TypeCode.UINT16_TC
+
+        indicies = range(0, 10)
+        names = ["arg"+str(i) if i != 5 else None for i in indicies]
+        args = [ieee1451.Argument(tc, i) for i in indicies]
+        aa = ieee1451.ArgumentArray()
+
+        for i, arg in enumerate(args):
+            if(i != 5):
+                aa.put_by_name(names[i], arg)
+            else:
+                aa.put_by_index(i, arg)
+
+        actual = [aa.find_name_by_index(i) for i in indicies]
+        self.assertEqual(names, actual)
+
+    def test_argarray_from_serializable(self):
+        """Test conversion to an ArgumentArray from serializable format."""
+
+        s = {'ArgumentArray': [
+                {'name': 'Arg1', 'type_code': 'UINT16_TC', 'value': 1024},
+                {'name': 'Arg2', 'type_code': 'UINT16_TC', 'value': 1025},
+                {'name': '', 'type_code': 'UINT16_TC', 'value': 1026}
+                ]}
+        tc = ieee1451.TypeCode.UINT16_TC
+        arg1 = ieee1451.Argument(tc, 1024)
+        arg2 = ieee1451.Argument(tc, 1025)
+        arg3 = ieee1451.Argument(tc, 1026)
+        expected = ieee1451.ArgumentArray()
+        expected.put_by_name("Arg1", arg1)
+        expected.put_by_name("Arg2", arg2)
+        expected.put_by_index(2, arg3)
+
+        actual = ieee1451.ArgumentArray.from_serializable(s)
+
+        self.assertEqual(expected, actual)
+
+    def test_argarray_to_serializable(self):
+        """Test convertinf ArgumentArray from serializable format to object."""
+
+        tc = ieee1451.TypeCode.UINT16_TC
+        arg1 = ieee1451.Argument(tc, 1024)
+        arg2 = ieee1451.Argument(tc, 1025)
+        arg3 = ieee1451.Argument(tc, 1026)
+        aa = ieee1451.ArgumentArray()
+        aa.put_by_name("Arg1", arg1)
+        aa.put_by_name("Arg2", arg2)
+        aa.put_by_index(2, arg3)
+
+        expected_output = {'ArgumentArray': [
+                    {'name': 'Arg1', 'type_code': 'UINT16_TC', 'value': 1024},
+                    {'name': 'Arg2', 'type_code': 'UINT16_TC', 'value': 1025},
+                    {'name': '', 'type_code': 'UINT16_TC', 'value': 1026}
+                    ]}
+
+        s = aa.serializable()
+        self.assertEqual(expected_output, s)
 
 if __name__ == '__main__':
     import sys
