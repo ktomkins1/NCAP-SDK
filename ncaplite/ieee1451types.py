@@ -27,6 +27,16 @@ class TimeRepresentation(object):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
 
+    def serializable(self):
+        """Return the TimeInstance in a serializable format"""
+        return {type(self).__name__: self.__dict__}
+
+    @staticmethod
+    def from_serializable(s):
+        """Initialize the object from the serializable format"""
+        d = s['TimeRepresentation']
+        return TimeInstance(**d)
+
 
 class TimeDuration(TimeRepresentation):
     """Defines the IEEE1451.0 TimeDuration"""
@@ -34,12 +44,24 @@ class TimeDuration(TimeRepresentation):
         self.secs = secs
         self.nsecs = nsecs
 
+    @staticmethod
+    def from_serializable(s):
+        """Initialize the object from the serializable format"""
+        d = s['TimeDuration']
+        return TimeDuration(**d)
+
 
 class TimeInstance(TimeRepresentation):
     """Defines the IEEE1451.0 TimeInstance"""
     def __init__(self, secs, nsecs):
         self.secs = secs
         self.nsecs = nsecs
+
+    @staticmethod
+    def from_serializable(s):
+        """Initialize the object from the serializable format"""
+        d = s['TimeInstance']
+        return TimeInstance(**d)
 
 
 class ErrorSource (Enum):
@@ -154,7 +176,6 @@ class Argument(object):
         return Argument(type_code=tc, value=val)
 
 
-
 class ArgumentArray(object):
     """Defines ArgumentArray from 1451.0 standard"""
 
@@ -165,24 +186,10 @@ class ArgumentArray(object):
     def __eq__(self, other):
         """Override equality operation."""
         return self.__dict__ == other.__dict__
-        # result = False
-        # if((type(self) == type(other)) and
-        #    (self.arguments == other.arguments) and
-        #    (self.indicies == other.indicies)):
-        #     result = True
-        #
-        # return result
 
     def __cmp__(self, other):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
-        # result = False
-        # if((type(self) == type(other)) and
-        #    (self.arguments == other.arguments) and
-        #    (self.indicies == other.indicies)):
-        #     result = True
-        #
-        # return result
 
     def __str__(self):
         """Override __str__ method."""

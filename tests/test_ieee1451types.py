@@ -34,6 +34,29 @@ class TestIEEE1451Types(unittest.TestCase):
         tc = ieee1451.TypeCode.UINT16_TC
         assert(str(tc) == 'UINT16_TC')
 
+    def test_timerepresentation_to_serializable(self):
+
+        t = ieee1451.TimeRepresentation(secs=1, nsecs=1000)
+        expected = {'TimeRepresentation': {'secs': 1, 'nsecs': 1000}}
+
+        s = t.serializable()
+        self.assertEqual(expected, s)
+
+    def test_timerepresentation_from_serializable(self):
+
+        expected = ieee1451.TimeRepresentation(secs=1, nsecs=1000)
+        s = {'TimeRepresentation': {'secs': 1, 'nsecs': 1000}}
+
+        actual = ieee1451.TimeRepresentation.from_serializable(s)
+        self.assertEqual(expected, actual)
+
+    def test_timeduration_to_serializable(self):
+        t = ieee1451.TimeDuration(secs=1, nsecs=1000)
+        expected = {'TimeDuration': {'secs': 1, 'nsecs': 1000}}
+
+        s = t.serializable()
+        self.assertEqual(expected, s)
+
     def test_argument_initializer(self):
         """Test that Agrument initialization is implemented properly."""
         tc = ieee1451.TypeCode.FLOAT32_ARRAY_TC
