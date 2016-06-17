@@ -115,6 +115,26 @@ class Error(object):
         """Override comparison operation."""
         return self.__dict__ == other.__dict__
 
+    def serializable(self):
+        """Return the Error in a serializable format
+        Bits 15 through 13 (The 3 most significant bits): The error code
+        source information is encoded in this location as described in Table 77
+        Bits 12 through 0 Error code enumeration; see Table 78."""
+        sourcval = self.source.value
+        codeval = self.code.value
+        result = sourcval << 13 | codeval
+        return {type(self).__name__: result}
+
+    @staticmethod
+    def from_serializable(s):
+        """Initialize the object from the serializable format."""
+        codeval = s['Error'] & 0x1FFF
+        sourceval = (s['Error'] & 0xE000) >> 13
+        src = ErrorSource(sourceval)
+        ec = ErrorCode(codeval)
+        result = Error(src, ec)
+        return result
+
 
 class TypeCode(Enum):
     """IEEE1451.0 TypCode Definitions"""

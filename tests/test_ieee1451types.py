@@ -274,7 +274,7 @@ class TestIEEE1451Types(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_argarray_to_serializable(self):
-        """Test convertinf ArgumentArray from serializable format to object."""
+        """Test converting ArgumentArray from serializable format to object."""
 
         tc = ieee1451.TypeCode.UINT16_TC
         arg1 = ieee1451.Argument(tc, 1024)
@@ -293,6 +293,27 @@ class TestIEEE1451Types(unittest.TestCase):
 
         s = aa.serializable()
         self.assertEqual(expected_output, s)
+
+    def test_error_to_serializable(self):
+        """Test converting Error object to serializable format."""
+        source = ieee1451.ErrorSource.ERROR_SOURCE_APPLICATION  # 4
+        code = ieee1451.ErrorCode.INVALID_COMMID  # 1
+        expected = {'Error': 0x8001}
+        error = ieee1451.Error(source=source, code=code)
+        result = error.serializable()
+        self.assertEqual(expected, result)
+
+    def test_error_from_serializable(self):
+        """Test converting to Error object from serializable format."""
+
+        source = ieee1451.ErrorSource.ERROR_SOURCE_APPLICATION  # 4
+        code = ieee1451.ErrorCode.INVALID_COMMID  # 1
+        expected = ieee1451.Error(source=source, code=code)
+        test_data = {'Error': 0x8001}
+
+        result = ieee1451.Error.from_serializable(test_data)
+        self.assertEqual(expected, result)
+
 
 if __name__ == '__main__':
     import sys
