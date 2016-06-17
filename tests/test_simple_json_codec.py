@@ -27,6 +27,7 @@ class TestSimpleJsonCodec(unittest.TestCase):
         """ Test inbound message from the serializable format"""
 
         test_data = ['7217', {
+                'error_code': {'Error': 0x8001},
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
@@ -38,12 +39,16 @@ class TestSimpleJsonCodec(unittest.TestCase):
                      'name': 'ADC1234'}]}
                 }]
 
+        source = ieee1451.ErrorSource.ERROR_SOURCE_APPLICATION
+        code = ieee1451.ErrorCode.INVALID_COMMID
+        error = ieee1451.Error(source=source, code=code)
         aa = ieee1451.ArgumentArray()
         arg = ieee1451.Argument(ieee1451.TypeCode.UINT16_TC,
                                 1024)
         aa.put_by_name("ADC1234", arg)
 
         expected_output = ['7217', {
+                'error_code': error,
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
@@ -58,12 +63,16 @@ class TestSimpleJsonCodec(unittest.TestCase):
     def test_to_serializable(self):
         """ Test converting an outbound response to serializable format"""
 
+        source = ieee1451.ErrorSource.ERROR_SOURCE_APPLICATION
+        code = ieee1451.ErrorCode.INVALID_COMMID
+        error = ieee1451.Error(source=source, code=code)
         aa = ieee1451.ArgumentArray()
         arg = ieee1451.Argument(ieee1451.TypeCode.UINT16_TC,
                                 1024)
         aa.put_by_name("ADC1234", arg)
 
         test_data = ['7217', {
+                'error_code': error,
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
@@ -73,6 +82,7 @@ class TestSimpleJsonCodec(unittest.TestCase):
                 }]
 
         expected_output = ['7217', {
+                'error_code': {'Error': 0x8001},
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
@@ -90,12 +100,16 @@ class TestSimpleJsonCodec(unittest.TestCase):
     def test_json_encode_decode(self):
         """Test that the codec can decode and encoded message."""
 
+        source = ieee1451.ErrorSource.ERROR_SOURCE_APPLICATION
+        code = ieee1451.ErrorCode.INVALID_COMMID
+        error = ieee1451.Error(source=source, code=code)
         aa = ieee1451.ArgumentArray()
         arg = ieee1451.Argument(ieee1451.TypeCode.UINT16_TC,
                                 1024)
         aa.put_by_name('ADC1234', arg)
 
         test_input = ['7217', {
+                'error_code': error,
                 'ncap_id': 1234,
                 'tim_id': 01,
                 'channel_id': 01,
