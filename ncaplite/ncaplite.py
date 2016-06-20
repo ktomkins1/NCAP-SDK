@@ -19,6 +19,7 @@ import thread
 
 logger = logging.getLogger(__name__)
 
+
 class NCAP(object):
     """ This class defines an NCAP instance.
 
@@ -125,7 +126,6 @@ class NCAP(object):
         sender = ('from', msg['from'])
         request = self.network_interface.parse_inbound(msg['body'])
 
-        # deal w/ the special case for join/unjoin
         if request[0] in [7108, 7109]:
             request = (request[0], sender[1])
 
@@ -152,13 +152,20 @@ class NCAP(object):
         """
         try:
             logger.debug('NCAP.handler_thread')
-            response = function(*request[1:])
-            msg = str(request[0]) + \
-                ',' + self.network_interface.parse_outbound(response)
+
+
+            if(type(request) == list):
+                result = function(**request[1])
+                response = [request[0], result]
+                msg = self.network_interface.parse_outbound(response)
+            else:
+                response = function(*request[1:])
+                msg = str(request[0]) + \
+                    ',' + self.network_interface.parse_outbound(response)
 
             logger.debug('NCAP.handler_thread response: '+str(msg))
 
             self.network_interface.send_message(
                             mto=str(sender_info[1]), mbody=msg, mtype='chat')
         except Exception as e:
-            logger.error("NCAP.handler_thread Exception: "+str(e))
+           logger.error("NCAP.handler_thread Exception: "+str(e))

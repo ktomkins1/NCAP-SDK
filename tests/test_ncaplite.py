@@ -16,6 +16,7 @@ from ncaplite import discovery_services
 from ncaplite import transducer_data_access_services
 from ncaplite import transducer_services_base
 from ncaplite import ieee1451types as ieee1451
+from ncaplite import simple_json_codec
 import mock
 import time
 import xml.etree.ElementTree as ET
@@ -23,6 +24,7 @@ import os
 import logging
 import logging.config
 import sys
+
 
 logger = logging.getLogger(__name__)
 
@@ -182,16 +184,17 @@ class TestNcaplite(unittest.TestCase):
 
         self.assertListEqual(expected_roster_status, actual_roster_status)
 
-    def test_client_can_read_sample_data(self):
-        """ Test that a client can read a Sample from
-        a channel of a TIM """
+    def test_client_can_read_sample_json(self):
+        """ Test that a client can read a Sample from a channel of a TIM json.
+        """
 
         def open_mock(tim_id, channel_id):
             error_code = ieee1451.Error(
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
-            return (error_code, trans_comm_id)
+            result = {'error_code': error_code, 'trans_comm_id': trans_comm_id}
+            return result
 
         def read_data_mock(trans_comm_id, timeout,
                            sampling_mode):
@@ -203,11 +206,14 @@ class TestNcaplite(unittest.TestCase):
             arg = ieee1451.Argument(tc, value)
             arg_array = ieee1451.ArgumentArray()
             arg_array.put_by_index(0, arg)
-            return (error_code, arg_array)
+
+            result = {'error_code': error_code, 'result': arg_array}
+            return result
 
         def client_on_data(msg):
             resp = self.codec.decode(msg['body'])
             self.actual_response = resp
+        self.codec = simple_json_codec.SimpleJsonCodec()
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -221,6 +227,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap.register_network_interface(network_if)
         discovery = discovery_services.DiscoveryServices(roster_path)
         ncap.register_discovery_service(discovery)
@@ -232,6 +239,7 @@ class TestNcaplite(unittest.TestCase):
         client_password = 'mypassword'
         client_if = network_interface.NetworkClient(
             client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
 
         # monkey-patch the data received method
         ncap_client.on_network_if_message = client_on_data
@@ -242,20 +250,41 @@ class TestNcaplite(unittest.TestCase):
         ncap_client.start()
         time.sleep(.5)
 
-        msgs = ['7211,1234,1,2,0;1000,0']
-        expected_response = (7211, [0, 0], 1234, 1, 2, 1024)
+        request = [7211, {
+                'ncap_id': 1234,
+                'tim_id': 1,
+                'channel_id': 2,
+                'timeout': ieee1451.TimeDuration(0, 1000),
+                'sampling_mode': 0}]
 
-        for msg in msgs:
-            ncap_client.network_interface.send_message(
-                                        mto=ncap.jid, mbody=msg, mtype='chat')
+        ec = ieee1451.Error(
+                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                ieee1451.ErrorCode.NO_ERROR)
 
-            time.sleep(.5)
+        aa = ieee1451.ArgumentArray()
+        arg = ieee1451.Argument(ieee1451.TypeCode.UINT32_TC,
+                                1024)
+        aa.put_by_index(0, arg)
+
+        expected_response = [7211, {
+                                'error_code': ec,
+                                'ncap_id': 1234,
+                                'tim_id': 1,
+                                'channel_id': 2,
+                                'sample_data': aa
+                                }]
+
+        msg = ncap_client.network_interface.codec.encode(request)
+        ncap_client.network_interface.send_message(
+                                    mto=ncap.jid, mbody=msg, mtype='chat')
+        time.sleep(.5)
 
         ncap_client.stop()
         ncap.stop()
+
         self.assertEqual(expected_response, self.actual_response)
 
-    def test_client_can_write_sample_data(self):
+    def test_client_can_write_sample_json(self):
         """ Test that a client can write a Sample from
         a channel of a TIM """
 
@@ -264,7 +293,8 @@ class TestNcaplite(unittest.TestCase):
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
-            return (error_code, trans_comm_id)
+            result = {'error_code': error_code, 'trans_comm_id': trans_comm_id}
+            return result
 
         self.result = []
 
@@ -274,11 +304,12 @@ class TestNcaplite(unittest.TestCase):
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             self.result.append(sample_value)
-            return error_code
+            return {'error_code': error_code}
 
         def client_on_data(msg):
             resp = self.codec.decode(msg['body'])
             self.actual_response = resp
+        self.codec = simple_json_codec.SimpleJsonCodec()
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -292,6 +323,7 @@ class TestNcaplite(unittest.TestCase):
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap.register_network_interface(network_if)
         discovery = discovery_services.DiscoveryServices(roster_path)
         ncap.register_discovery_service(discovery)
@@ -303,6 +335,7 @@ class TestNcaplite(unittest.TestCase):
         client_password = 'mypassword'
         client_if = network_interface.NetworkClient(
             client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
 
         # monkey-patch the data received method
         ncap_client.on_network_if_message = client_on_data
@@ -313,28 +346,42 @@ class TestNcaplite(unittest.TestCase):
         ncap_client.start()
         time.sleep(.5)
 
-        msgs = ('7217,1234,1,2,0;1000,0,1024',
-                '7217,1234,1,2,0;1000,0,1025',
-                '7217,1234,1,2,0;1000,0,1026')
+        ec = ieee1451.Error(
+        ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+        ieee1451.ErrorCode.NO_ERROR)
 
-        expected_response = (7217, [0, 0], 1234, 1, 2)
-        expected_write_vals = [1024, 1025, 1026]
-        expected_write_args = []
+        aa = ieee1451.ArgumentArray()
+        arg = ieee1451.Argument(ieee1451.TypeCode.UINT32_TC,
+                                1024)
+        aa.put_by_index(0, arg)
 
-        for i, msg in enumerate(msgs):
-            a = ieee1451.Argument(value=expected_write_vals[i])
-            aa = ieee1451.ArgumentArray()
-            aa.put_by_index(0, a)
-            expected_write_args.append(aa)
-            ncap_client.network_interface.send_message(
-                                        mto=ncap.jid, mbody=msg, mtype='chat')
+        request = [7217, {
+            'ncap_id': 1234,
+            'tim_id': 1,
+            'channel_id': 2,
+            'timeout': ieee1451.TimeDuration(0, 1000),
+            'sampling_mode': 0,
+            'sample_data': aa
+        }]
 
-            time.sleep(.5)
-            self.assertEqual(expected_response, self.actual_response)
+        expected_response =[7217, {
+            'error_code': ec,
+            'ncap_id': 1234,
+            'tim_id': 1,
+            'channel_id': 2,
+        }]
 
+        msg = ncap_client.network_interface.codec.encode(request)
+        ncap_client.network_interface.send_message(
+                                    mto=ncap.jid, mbody=msg, mtype='chat')
+
+        time.sleep(.5)
         ncap_client.stop()
         ncap.stop()
-        self.assertEqual(expected_write_args, self.result)
+
+        self.assertEqual(expected_response, self.actual_response)
+        self.assertEqual(self.result[0], request[1]['sample_data'])
+
 
 
 if __name__ == '__main__':

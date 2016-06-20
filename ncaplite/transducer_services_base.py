@@ -43,7 +43,7 @@ class TimDiscoveryBase(object):
         """
         error_code = 0
         module_ids = []
-        return (error_code, module_ids)
+        return {'error_code': error_code, 'module_ids': module_ids}
 
     @abc.abstractmethod
     def report_tims(self, module_id):
@@ -62,7 +62,7 @@ class TimDiscoveryBase(object):
         """
         error_code = 0
         tim_ids = []
-        return (error_code, tim_ids)
+        return {'error_code': error_code, 'tim_ids': tim_ids}
 
     @abc.abstractmethod
     def report_channels(self, tim_id, channel_ids, names):
@@ -81,8 +81,11 @@ class TimDiscoveryBase(object):
         """
         error_code = 0
         channel_ids = []
-        tim_ids = []
-        return (error_code, channel_ids, tim_ids)
+        names = []
+        result = {'error_code': error_code,
+                  'channel_ids': channel_ids,
+                  'names': names}
+        return result
 
 
 class TransducerAccessBase(object):
@@ -116,7 +119,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         trans_comm_id = 0
-        return (error_code, trans_comm_id)
+        return {'error_code': error_code, 'trans_comm_id': trans_comm_id}
 
     @abc.abstractmethod
     def open_qos(self, tim_id, channel_id, qos_params):
@@ -148,7 +151,10 @@ class TransducerAccessBase(object):
         error_code = 0
         qos_params = ()
         trans_comm_id = 0
-        return (error_code, qos_params, trans_comm_id)
+        result = {'error_code': error_code,
+                  'qos_params': qos_params,
+                  'trans_comm_id': trans_comm_id}
+        return result
 
     @abc.abstractmethod
     def open_group(self, tim_ids, channel_ids):
@@ -179,7 +185,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         trans_comm_id = 0
-        return (error_code, trans_comm_id)
+        return {'error_code': error_code, 'trans_comm_id': trans_comm_id}
 
     @abc.abstractmethod
     def open_group_qos(self, tim_ids, channel_ids, qos_params):
@@ -216,7 +222,10 @@ class TransducerAccessBase(object):
         error_code = 0
         qos_params = ()
         trans_comm_id = 0
-        return (error_code, qos_params, trans_comm_id)
+        result = {'error_code': error_code,
+                  'qos_params': qos_params,
+                  'trans_comm_id': trans_comm_id}
+        return result
 
     @abc.abstractmethod
     def close(self, trans_comm_id):
@@ -235,7 +244,7 @@ class TransducerAccessBase(object):
 
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def read_data(self, trans_comm_id, timeout, sampling_mode):
@@ -278,7 +287,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         result = ()
-        return (error_code, result)
+        return {'error_code': error_code, 'result': result}
 
     @abc.abstractmethod
     def write_data(self, trans_comm_id, timeout, sampling_mode, value):
@@ -328,7 +337,7 @@ class TransducerAccessBase(object):
 
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def start_read_data(self, trans_comm_id, trigger_time, timeout,
@@ -363,7 +372,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         operation_id = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def start_write_data(self, trans_comm_id, trigger_time, timeout,
@@ -398,7 +407,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         operation_id = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def start_stream(self, trans_comm_id, callback, operation_id):
@@ -424,7 +433,7 @@ class TransducerAccessBase(object):
         """
         error_code = 0
         operation_id = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def cancel(self, operation_id):
@@ -439,7 +448,7 @@ class TransducerAccessBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
 
 class TransducerManagerBase(object):
@@ -475,14 +484,14 @@ class TransducerManagerBase(object):
                     lock. A value of secs == 0, nsecs == 0 implies no wait and
                     can be used to test for an existing lock.
                     A value of secs == 0, nsecs == –1 implies wait forever.
-                    Using a value of “wait forever” is extremely dangerous as it
-                    can create deadlocks.
+                    Using a value of “wait forever”
+                    is extremely dangerous as it can create deadlocks.
 
         Returns:
         ErrorCode rror_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def unlock(self, trans_comm_id):
@@ -510,7 +519,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def report_locks(self):
@@ -522,7 +531,7 @@ class TransducerManagerBase(object):
         """
         error_code = 0
         trans_comm_ids = []
-        return (error_code, trans_comm_ids)
+        return {'error_code': error_code, 'trans_comm_ids': trans_comm_ids}
 
     @abc.abstractmethod
     def break_lock(self, trans_comm_id):
@@ -538,7 +547,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def send_command(self, trans_comm_id, timeout, cmd_class_id,
@@ -566,7 +575,7 @@ class TransducerManagerBase(object):
         """
         out_args = []
         error_code = 0
-        return (error_code, out_args)
+        return {'error_code': error_code, 'out_args': out_args}
 
     @abc.abstractmethod
     def send_command_raw(self, trans_comm_id, timeout, cmd_class_id,
@@ -582,7 +591,8 @@ class TransducerManagerBase(object):
         UInt16 trans_comm_id: specifies the transducer communication session.
         TimeDuration timeout: the maximum time to wait before a time-out error.
                     A value of secs == 0, nsecs == –1 means “wait forever.”
-        UInt8 cmd_class_id: the desired command class code. See Table 15 for details.
+        UInt8 cmd_class_id: the desired command class code.
+        See Table 15 for details.
         UInt8 cmd_function_id: the desired command function code. See Clause 7
                             for details.
         OctetArray in_args: the input arguments in OctetArray form.
@@ -593,7 +603,7 @@ class TransducerManagerBase(object):
         """
         out_args = []
         error_code = 0
-        return (error_code, out_args)
+        return {'error_code': error_code, 'out_args': out_args}
 
     @abc.abstractmethod
     def start_command(self, trans_comm_id, trigger_time, timeout, cmd_class_id,
@@ -625,7 +635,7 @@ class TransducerManagerBase(object):
         """
         operation_id = 0
         error_code = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def configure_attributes(self, trans_comm_id, attribute_names):
@@ -642,7 +652,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def trigger(self, trans_comm_id, trigger_time, timeout, sampling_mode):
@@ -666,7 +676,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def start_trigger(self, trans_comm_id, trigger_time, timeout,
@@ -697,7 +707,7 @@ class TransducerManagerBase(object):
         """
         operation_id = 0
         error_code = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def clear(self, trans_comm_id, timeout, clear_mode):
@@ -723,7 +733,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def register_status_change(self, trans_comm_id, timeout, callback):
@@ -742,7 +752,7 @@ class TransducerManagerBase(object):
         """
         operation_id = 0
         error_code = 0
-        return (error_code, operation_id)
+        return {'error_code': error_code, 'operation_id': operation_id}
 
     @abc.abstractmethod
     def unregister_status_change(self, trans_comm_id):
@@ -756,7 +766,7 @@ class TransducerManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
 
 class TedsManagerBase(object):
@@ -792,7 +802,7 @@ class TedsManagerBase(object):
         """
         error_code = 0
         teds = []
-        return (error_code, teds)
+        return {'error_code': error_code, 'teds': teds}
 
     @abc.abstractmethod
     def write_teds(self, trans_comm_id, timeout, teds_type, teds):
@@ -823,7 +833,7 @@ class TedsManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def read_raw_teds(self, trans_comm_id, timeout, teds_type):
@@ -843,11 +853,12 @@ class TedsManagerBase(object):
 
         Returns:
         ErrorCode error_code: an error code
-        OctetArray raw_teds: OctetArray contains the raw TEDS information in “tuple” form.
+        OctetArray raw_teds: OctetArray contains the raw TEDS information
+                             in “tuple” form.
         """
         error_code = 0
         raw_teds = ()
-        return (error_code, raw_teds)
+        return {'error_code': error_code, 'raw_teds': raw_teds}
 
     @abc.abstractmethod
     def write_raw_teds(self, trans_comm_id, timeout, teds_type, raw_teds):
@@ -876,7 +887,7 @@ class TedsManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def update_teds_cache(self, trans_comm_id, timeout, teds_type):
@@ -899,7 +910,7 @@ class TedsManagerBase(object):
         ErrorCode error_code: an error code
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
 
 class CommManagerBase(object):
@@ -944,7 +955,12 @@ class CommManagerBase(object):
         comm_object = None
         comm_type = 255
         technology_id = 0
-        return (error_code, comm_object, comm_type, technology_id)
+        result = {'error_code': error_code,
+                  'comm_object': comm_object,
+                  'comm_type': comm_type,
+                  'technology_id': technology_id}
+
+        return result
 
 
 class ApiCallbackBase(object):
@@ -977,7 +993,7 @@ class ApiCallbackBase(object):
                             error codes.
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def actuation_complete(self, operation_id, status):
@@ -996,7 +1012,7 @@ class ApiCallbackBase(object):
                         to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def status_change(self, operation_id, status):
@@ -1014,7 +1030,7 @@ class ApiCallbackBase(object):
                         to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def command_complete(self, operation_id, out_args, status):
@@ -1023,7 +1039,8 @@ class ApiCallbackBase(object):
 
         Args:
         UInt16 operation_id: specifies the desired operation ID that was
-                            returned in the startRead( ) or startStream( ) call.
+                            returned in the startRead( ) or
+                            startStream( ) call.
         ArgumentArray out_args: contains the returned ArgumentArray.
                             This informationis specific to each command.
         UInt16 status: specifies the error code from the non-blocking
@@ -1035,7 +1052,7 @@ class ApiCallbackBase(object):
 
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}
 
     @abc.abstractmethod
     def trigger_complete(self, operation_id, status):
@@ -1054,4 +1071,4 @@ class ApiCallbackBase(object):
                     to the IEEE 1451.0 layer. See 9.3.1.2 for error codes.
         """
         error_code = 0
-        return error_code
+        return {'error_code': error_code}

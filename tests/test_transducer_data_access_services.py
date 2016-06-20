@@ -37,8 +37,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
-            print("open mock")
-            return (error_code, trans_comm_id)
+            return {'error_code': error_code,'trans_comm_id': trans_comm_id}
 
         def read_data_mock(trans_comm_id, timeout, sampling_mode):
             error_code = ieee1451.Error(
@@ -49,7 +48,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
             arg = ieee1451.Argument(tc, value)
             arg_array = ieee1451.ArgumentArray()
             arg_array.put_by_index(0, arg)
-            return (error_code, arg_array)
+            return {'error_code': error_code, 'result': arg_array}
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -70,7 +69,13 @@ class TestTransducerDataAccessServices(unittest.TestCase):
         expected_arg_array = ieee1451.ArgumentArray()
         expected_arg_array.put_by_index(0, expceted_arg)
 
-        expected_response = (self.no_error, 1234, 1, 1, expected_arg_array)
+        #expected_response = (self.no_error, 1234, 1, 1, expected_arg_array)
+
+        expected_response = {'error_code': self.no_error,
+                             'ncap_id': 1234,
+                             'tim_id': 1,
+                             'channel_id': 1,
+                             'sample_data': expected_arg_array}
 
         response = tdas.read_transducer_sample_data_from_a_channel_of_a_tim(
                                                     **request)
@@ -91,7 +96,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             trans_comm_id = 1
-            return (error_code, trans_comm_id)
+            return {'error_code': error_code, 'trans_comm_id': trans_comm_id}
 
         self.result = []
 
@@ -101,7 +106,7 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                                 ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                                 ieee1451.ErrorCode.NO_ERROR)
             self.result.append(value)
-            return error_code
+            return {'error_code': error_code}
 
         tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
         tdaccs.open.side_effect = open_mock
@@ -119,7 +124,10 @@ class TestTransducerDataAccessServices(unittest.TestCase):
                 'sample_data': None
                 }
 
-        expected_response = (self.no_error, 1234, 1, 1)
+        expected_response = {'error_code': self.no_error,
+                             'ncap_id': 1234,
+                             'tim_id': 1,
+                             'channel_id': 1}
         test_vals = [1024, 1025, 1026]
         expected_output = []
 

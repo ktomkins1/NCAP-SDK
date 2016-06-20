@@ -54,16 +54,29 @@ class TransducerDataAccessServices(object):
         error_code = ieee1451.Error(
                             ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                             ieee1451.ErrorCode.NO_ERROR)
-        (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
-                                                                  channel_id)
 
-        (error_code, sample_data) = self.transducer_access.read_data(
-                                                                trans_comm_id,
-                                                                timeout,
-                                                                sampling_mode)
+        opened = self.transducer_access.open(tim_id,
+                                             channel_id)
+
+        trans_comm_id = opened['trans_comm_id']
+        error = opened['error_code']
+
+        read = \
+                self.transducer_access.read_data(trans_comm_id,
+                                                  timeout,
+                                                  sampling_mode)
+        error = read['error_code']
+        sample_data = read['result']
+
         self.transducer_access.close(trans_comm_id)
 
-        return (error_code, ncap_id, tim_id, channel_id, sample_data)
+        result = {'error_code': error,
+                  'ncap_id': ncap_id,
+                  'tim_id': tim_id,
+                  'channel_id': channel_id,
+                  'sample_data': sample_data}
+
+        return result
 
     def write_transducer_sample_data_to_a_channel_of_a_tim(self,
                                                            ncap_id,
@@ -95,14 +108,26 @@ class TransducerDataAccessServices(object):
         else:
             arg_array = sample_data
 
-        error_code = ieee1451.Error(
+        error = ieee1451.Error(
                             ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                             ieee1451.ErrorCode.NO_ERROR)
-        (error_code, trans_comm_id) = self.transducer_access.open(tim_id,
-                                                                  channel_id)
-        error_code = self.transducer_access.write_data(trans_comm_id,
+
+
+
+        opened = self.transducer_access.open(tim_id, channel_id)
+        trans_comm_id = opened['trans_comm_id']
+        error = opened['error_code']
+
+        written = self.transducer_access.write_data(trans_comm_id,
                                                        timeout,
                                                        sampling_mode,
                                                        arg_array)
+        error = written['error_code']
         self.transducer_access.close(trans_comm_id)
-        return (error_code, ncap_id, tim_id, channel_id)
+
+        result = {'error_code': error,
+                  'ncap_id': ncap_id,
+                  'tim_id': tim_id,
+                  'channel_id': channel_id}
+
+        return result
