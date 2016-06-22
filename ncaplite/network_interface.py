@@ -11,6 +11,7 @@ import sys
 import sleekxmpp
 import ast
 import ieee1451types as ieee1451
+import simple_json_codec
 
 if sys.version_info < (3, 0):
     from sleekxmpp.util.misc_ops import setdefaultencoding
@@ -92,7 +93,6 @@ class NetworkClient(sleekxmpp.ClientXMPP):
         self.register_plugin('xep_0060')  # PubSub
         self.register_plugin('xep_0199')  # XMPP Ping
         self.broker_address = broker_address
-        self.codec = DefaultCodec()
 
     def run(self):
         # Connect to the XMPP server and start processing XMPP stanzas.

@@ -23,7 +23,6 @@ import xml.etree.ElementTree as ET
 import os
 import logging
 import logging.config
-import sys
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +47,7 @@ class TestNcaplite(unittest.TestCase):
         root = ET.Element("roster")
         tree = ET.ElementTree(root)
         tree.write("tests/testroster.xml")
-        self.codec = network_interface.DefaultCodec()
+        self.codec = simple_json_codec.SimpleJsonCodec()
 
     def tearDown(self):
         """Teardown for NCAP unit tests"""
@@ -141,8 +140,10 @@ class TestNcaplite(unittest.TestCase):
         ncap.load_config(self.config_file_path)
         network_if = network_interface.NetworkClient(
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap.register_network_interface(network_if)
-        discovery = discovery_services.DiscoveryServices(roster_path)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
         ncap.register_discovery_service(discovery)
 
         ncap_client = ncaplite.NCAP()
@@ -151,17 +152,20 @@ class TestNcaplite(unittest.TestCase):
         client_password = 'mypassword'
         client_if = network_interface.NetworkClient(
             client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap_client.register_network_interface(client_if)
 
         ncap.start()
         ncap_client.start()
-        msgs = ['7108', '7109']
+        msgs = [[7108, {'client_id': client_jid}], [7109, {'client_id': client_jid}]]
         expected_roster_status = [1, 0]
         actual_roster_status = []
 
         time.sleep(.5)
 
-        for msg in msgs:
+        for m in msgs:
+
+            msg = client_if.codec.encode(m)
             ncap_client.network_interface.send_message(
                                         mto=ncap.jid, mbody=msg, mtype='chat')
 
@@ -229,7 +233,8 @@ class TestNcaplite(unittest.TestCase):
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
         network_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap.register_network_interface(network_if)
-        discovery = discovery_services.DiscoveryServices(roster_path)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 
@@ -325,7 +330,8 @@ class TestNcaplite(unittest.TestCase):
                 ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
         network_if.codec = simple_json_codec.SimpleJsonCodec()
         ncap.register_network_interface(network_if)
-        discovery = discovery_services.DiscoveryServices(roster_path)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
         ncap.register_discovery_service(discovery)
         ncap.register_transducer_data_access_service(tdas)
 

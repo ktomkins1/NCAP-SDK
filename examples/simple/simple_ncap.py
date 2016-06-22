@@ -34,8 +34,7 @@ def main():
     ncap.register_network_interface(network_if)
 
     # create a discovery services instance
-    discovery = discovery_services.DiscoveryServices(
-                                                    ncap.roster_file_path)
+    discovery = discovery_services.DiscoveryServices()
 
     # register the discovery service instance with the ncap
     ncap.register_discovery_service(discovery)

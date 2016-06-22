@@ -9,11 +9,15 @@ Tests for `ncaplite` module.
 """
 
 import unittest
-
+import mock
+import os
 
 from ncaplite import discovery_services
+from ncaplite import transducer_services_base
+from ncaplite import ieee1451types as ieee1451
 import xml.etree.ElementTree as ET
-import os
+
+
 
 
 class TestDiscoveryServices(unittest.TestCase):
@@ -44,11 +48,10 @@ class TestDiscoveryServices(unittest.TestCase):
         is called """
         on_roster = 0
         roster_path = 'tests/testroster.xml'
-        discovery = discovery_services.DiscoveryServices(roster_path)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
         client_id = 'unittest@ncaplite.loc'
         discovery.ncap_client_join(client_id)
-
-        # tree = ET.parse(roster_path)
         root = discovery.tree.getroot()
 
         jids = []
@@ -65,7 +68,8 @@ class TestDiscoveryServices(unittest.TestCase):
             when the unjoin function is called. """
         on_roster = 0
         roster_path = 'tests/testroster.xml'
-        discovery = discovery_services.DiscoveryServices(roster_path)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
         client_id = 'unittest@ncaplite.loc'
 
         discovery.ncap_client_join(client_id)
@@ -96,3 +100,58 @@ class TestDiscoveryServices(unittest.TestCase):
             on_roster = 0
 
         assert(on_roster == 0)
+
+    def test_ncap_tim_discover(self):
+        """ Test TIM discovery service."""
+
+        def report_comm_module_mock():
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
+            module_ids = [1, 2]
+            result = {'error_code': error_code,
+                      'module_ids': module_ids}
+
+            return result
+
+        def report_tims_mock(module_id):
+            error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+            tim_ids = []
+            if(module_id == 1):
+                tim_ids = [1, 2]
+            else:
+                tim_ids = [3]
+
+            result = {'error_code': error_code,
+                      'tim_ids': tim_ids}
+
+            return result
+
+
+        tdisco = mock.Mock(spec=transducer_services_base.TimDiscoveryBase)
+        tdisco.report_comm_module.side_effect = report_comm_module_mock
+        tdisco.report_tims.side_effect = report_tims_mock
+
+        disco = discovery_services.DiscoveryServices()
+        disco.register_transducer_access_service(tdisco)
+
+
+        request = {'ncap_id': 1234}
+
+        error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+
+        num_of_tim = 3
+
+        tim_ids = [1, 2, 3]
+
+        expected_reposne = {'error_code': error_code,
+                            'num_of_tim': num_of_tim,
+                            'tim_ids': tim_ids}
+
+        result = disco.ncap_tim_discover(**request)
+
+        self.assertEqual(result, expected_reposne)

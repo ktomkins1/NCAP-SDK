@@ -126,9 +126,6 @@ class NCAP(object):
         sender = ('from', msg['from'])
         request = self.network_interface.parse_inbound(msg['body'])
 
-        if request[0] in [7108, 7109]:
-            request = (request[0], sender[1])
-
         logger.debug('NCAP.handle_message: '+str(request))
         thread.start_new_thread(self.handler_thread,
                                 (request,
@@ -153,8 +150,7 @@ class NCAP(object):
         try:
             logger.debug('NCAP.handler_thread')
 
-
-            if(type(request) == list):
+            if type(request) == list:
                 result = function(**request[1])
                 response = [request[0], result]
                 msg = self.network_interface.parse_outbound(response)

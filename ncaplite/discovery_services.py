@@ -8,7 +8,7 @@
 """
 
 import xml.etree.ElementTree as ET
-
+import ieee1451types as ieee1451
 
 class DiscoveryServices(object):
     """This class defines the discover services offered by an NCAP.
@@ -20,13 +20,22 @@ class DiscoveryServices(object):
         standard.
     """
 
-    def __init__(self, roster_path):
+    def __init__(self):
         """
         """
         self.client_list = []
+
+    def open_roster(self, roster_path):
+        """ Open roster file.
+        """
         self.roster_path = roster_path
         with open(self.roster_path, 'r') as f:
             self.tree = ET.parse(self.roster_path)
+
+    def register_transducer_access_service(self, transducer_access):
+        """Register a TimDiscovery service object with the\
+        TransducerDataAccessServices object."""
+        self.transducer_access = transducer_access
 
     def ncap_client_join(self, client_id):
 
@@ -111,3 +120,34 @@ class DiscoveryServices(object):
             #     tree.write(f)
 
             return (on_roster, )
+
+    def ncap_tim_discover(self, ncap_id):
+        """
+        :param ncap_id: the ncap id number
+        :return:
+            error_code: the error code of type ieee1451types.Error
+            num_of_tim: the number of TIMs connected to the ncap (UINT16)
+            tim_ids: the list of tim ids for the connected tims
+        """
+        error_code = ieee1451.Error(
+            ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+            ieee1451.ErrorCode.NO_ERROR)
+
+        comrep = self.transducer_access.report_comm_module()
+
+        comm_ids = comrep['module_ids']
+        error_code = comrep['error_code']
+
+        tim_ids = []
+        for id in comm_ids:
+            timrep = self.transducer_access.report_tims(id)
+            error_code = timrep['error_code']
+            tim_ids = tim_ids + timrep['tim_ids']
+
+        num_of_tim = len(tim_ids)
+
+        result = {'error_code': error_code,
+                  'num_of_tim': num_of_tim,
+                  'tim_ids': tim_ids}
+
+        return result
