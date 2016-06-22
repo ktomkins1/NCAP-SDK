@@ -388,6 +388,93 @@ class TestNcaplite(unittest.TestCase):
         self.assertEqual(expected_response, self.actual_response)
         self.assertEqual(self.result[0], request[1]['sample_data'])
 
+    def test_client_tim_discover(self):
+        """ Test that the client can discover tims connected to the ncap
+        """
+
+        def report_comm_module_mock():
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
+            module_ids = [1, 2]
+            result = {'error_code': error_code,
+                      'module_ids': module_ids}
+
+            return result
+
+        def report_tims_mock(module_id):
+            error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+            tim_ids = []
+            if(module_id == 1):
+                tim_ids = [1, 2]
+            else:
+                tim_ids = [3]
+
+            result = {'error_code': error_code,
+                      'tim_ids': tim_ids}
+
+            return result
+
+        def client_on_data(msg):
+            resp = self.codec.decode(msg['body'])
+            self.actual_response = resp
+
+        tdisco = mock.Mock(spec=transducer_services_base.TimDiscoveryBase)
+        tdisco.report_comm_module.side_effect = report_comm_module_mock
+        tdisco.report_tims.side_effect = report_tims_mock
+
+        roster_path = 'tests/testroster.xml'
+        ncap = ncaplite.NCAP()
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(
+                ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
+        ncap.register_network_interface(network_if)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
+        ncap.register_discovery_service(discovery)
+        discovery.register_transducer_access_service(tdisco)
+
+        ncap_client = ncaplite.NCAP()
+        ncap_client.type = "client"
+        client_jid = 'unittest@ncaplite.loc'
+        client_password = 'mypassword'
+        client_if = network_interface.NetworkClient(
+            client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
+
+        # monkey-patch the data received method
+        ncap_client.on_network_if_message = client_on_data
+
+        ncap_client.register_network_interface(client_if)
+
+
+        request = [716, {'ncap_id': 1234,}]
+
+        ec = ieee1451.Error(
+        ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+        ieee1451.ErrorCode.NO_ERROR)
+        num_of_tim = 3
+        tim_ids = [1, 2, 3]
+        expected_response = [716, {'error_code': ec,
+                                   'num_of_tim': num_of_tim,
+                                   'tim_ids': tim_ids}]
+
+        ncap.start()
+        ncap_client.start()
+        time.sleep(.5)
+
+        msg = ncap_client.network_interface.codec.encode(request)
+        ncap_client.network_interface.send_message(
+                                    mto=ncap.jid, mbody=msg, mtype='chat')
+        time.sleep(.5)
+
+        ncap_client.stop()
+        ncap.stop()
+
+        self.assertEqual(expected_response, self.actual_response)
 
 
 if __name__ == '__main__':
