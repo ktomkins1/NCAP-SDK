@@ -24,13 +24,9 @@ ncaplite contains a python package and reference design for implementing IEEE P2
 Features
 --------
 
-* Join / Unjoin
 * Read transducer sample from a single channel of a TIM
-* Read transducer block data from a single channel of a TIM
-* Read transducer sample from multiple channels of a TIM
-* Read transducer block data from multiple channels of a TIM
 * Write transducer sample to a single channel of a TIM
-* Write transducer block data to a single channel of a TIM
+* TIM Discovery Service
 
 Developer Setup Using Vagrant
 -----------------------------
