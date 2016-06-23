@@ -151,3 +151,35 @@ class DiscoveryServices(object):
                   'tim_ids': tim_ids}
 
         return result
+
+    def ncap_transducer_discover(self, ncap_id, tim_id):
+        """
+        :param ncapId: the ncap id to query
+        :param timId: the tim id to query
+        :return:
+            error_code: the error code of type ieee1451types.Error
+            ncap_id: the queried ncap id
+            tim_id: the tim id to queried for transducer channels
+            num_of_transducer_channels: the number of connected transducer channels reported in the id list
+            transducer_channel_ids: the list of transducer channel ids for the queried tim
+            transducer_channel_names: the list of transducer channel names for the queried tim
+        """
+        error_code = ieee1451.Error(
+            ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+            ieee1451.ErrorCode.NO_ERROR)
+
+        chanrep = self.transducer_access.report_channels(tim_id)
+
+        error_code = chanrep['error_code']
+        trans_channel_ids = chanrep['channel_ids']
+        num_trans_channels = len(trans_channel_ids)
+        channel_names = chanrep['channel_names']
+
+        result = {'error_code': error_code,
+                  'ncap_id': 1234,
+                  'tim_id': tim_id,
+                  'num_of_transducer_channels': num_trans_channels,
+                  'trans_channel_ids': trans_channel_ids,
+                  'trans_channel_names': channel_names}
+
+        return result

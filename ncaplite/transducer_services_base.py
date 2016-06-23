@@ -65,18 +65,18 @@ class TimDiscoveryBase(object):
         return {'error_code': error_code, 'tim_ids': tim_ids}
 
     @abc.abstractmethod
-    def report_channels(self, tim_id, channel_ids, names):
+    def report_channels(self, tim_id):
         """ This returns the TransducerChannel list and names for this TIM.
         This information is retrieved from the cached TEDS.
 
-        Arga:
+        Args:
         UInt16 tim_id: the desired TIM.
 
         Returns:
         ErrorCode error_code: an error code
         UInt16Array channel_ids: is returned to the application and contains
                                 all known TransducerChannels on this TIM.
-        StringArray names: is returned to the application and contains the
+        StringArray channel_names: is returned to the application and contains the
                Transducer Channel names.
         """
         error_code = 0
@@ -84,7 +84,8 @@ class TimDiscoveryBase(object):
         names = []
         result = {'error_code': error_code,
                   'channel_ids': channel_ids,
-                  'names': names}
+                  'channel_names': names}
+
         return result
 
 

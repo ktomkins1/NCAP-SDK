@@ -155,3 +155,48 @@ class TestDiscoveryServices(unittest.TestCase):
         result = disco.ncap_tim_discover(**request)
 
         self.assertEqual(result, expected_reposne)
+
+    def test_ncap_transducer_discover(self):
+        """ Test transducer discover request. """
+        def report_channels_mock(tim_id):
+
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
+            channel_ids = [1, 2, 3]
+            names = ["Channel1", "Channel2", "Channel3"]
+            result = {'error_code': error_code,
+                      'channel_ids': channel_ids,
+                      'channel_names': names}
+
+            return result
+
+
+        tdisco = mock.Mock(spec=transducer_services_base.TimDiscoveryBase)
+        tdisco.report_channels.side_effect = report_channels_mock
+
+        disco = discovery_services.DiscoveryServices()
+        disco.register_transducer_access_service(tdisco)
+
+
+        request = {'ncap_id': 1234, 'tim_id': 1}
+
+        error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+
+        tim_id = 1
+        num_trans_channels = 3
+        trans_channel_ids = [1, 2, 3]
+        trans_channel_names = ["Channel1", "Channel2", "Channel3"]
+
+        expected_reposne = {'error_code': error_code,
+                            'ncap_id': 1234,
+                            'tim_id': tim_id,
+                            'num_of_transducer_channels': num_trans_channels,
+                            'trans_channel_ids': trans_channel_ids,
+                            'trans_channel_names': trans_channel_names}
+
+        result = disco.ncap_transducer_discover(**request)
+
+        self.assertEqual(result, expected_reposne)
