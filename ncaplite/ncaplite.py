@@ -80,6 +80,7 @@ class NCAP(object):
         self.message_handlers[7108] = self.discovery_service.ncap_client_join
         self.message_handlers[7109] = self.discovery_service.ncap_client_unjoin
         self.message_handlers[716] = self.discovery_service.ncap_tim_discover
+        self.message_handlers[717] = self.discovery_service.ncap_transducer_discover
 
     def register_transducer_data_access_service(self, transducer_access):
         logger.debug('NCAP.register_transducer_data_access_service')

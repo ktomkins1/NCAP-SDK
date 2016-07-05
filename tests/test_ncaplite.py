@@ -476,6 +476,89 @@ class TestNcaplite(unittest.TestCase):
 
         self.assertEqual(expected_response, self.actual_response)
 
+    def test_client_transducer_discover(self):
+        """ Test that the client can discover transducers connected to a tim
+        """
+
+        def report_channels_mock(tim_id):
+
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
+            channel_ids = [1, 2, 3]
+            names = ["Channel1", "Channel2", "Channel3"]
+            result = {'error_code': error_code,
+                      'channel_ids': channel_ids,
+                      'channel_names': names}
+
+            return result
+
+        def client_on_data(msg):
+            resp = self.codec.decode(msg['body'])
+            self.actual_response = resp
+
+        tdisco = mock.Mock(spec=transducer_services_base.TimDiscoveryBase)
+        tdisco.report_channels.side_effect = report_channels_mock
+
+
+        roster_path = 'tests/testroster.xml'
+        ncap = ncaplite.NCAP()
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(
+                ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
+        ncap.register_network_interface(network_if)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
+        ncap.register_discovery_service(discovery)
+        discovery.register_transducer_access_service(tdisco)
+
+        ncap_client = ncaplite.NCAP()
+        ncap_client.type = "client"
+        client_jid = 'unittest@ncaplite.loc'
+        client_password = 'mypassword'
+        client_if = network_interface.NetworkClient(
+            client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
+
+        # monkey-patch the data received method
+        ncap_client.on_network_if_message = client_on_data
+
+        ncap_client.register_network_interface(client_if)
+
+
+        request = [717, {'ncap_id': 1234,'tim_id': 1}]
+
+        ec = ieee1451.Error(
+        ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+        ieee1451.ErrorCode.NO_ERROR)
+
+        tim_id = 1
+        num_trans_channels = 3
+        trans_channel_ids = [1, 2, 3]
+        trans_channel_names = ["Channel1", "Channel2", "Channel3"]
+
+        expected_response = [717, {'error_code': ec,
+                            'ncap_id': 1234,
+                            'tim_id': tim_id,
+                            'num_of_transducer_channels': num_trans_channels,
+                            'trans_channel_ids': trans_channel_ids,
+                            'trans_channel_names': trans_channel_names}]
+
+        ncap.start()
+        ncap_client.start()
+        time.sleep(.5)
+
+        msg = ncap_client.network_interface.codec.encode(request)
+        ncap_client.network_interface.send_message(
+                                    mto=ncap.jid, mbody=msg, mtype='chat')
+        time.sleep(.5)
+
+        ncap_client.stop()
+        ncap.stop()
+
+        self.assertEqual(expected_response, self.actual_response)
+
 
 if __name__ == '__main__':
     import sys
