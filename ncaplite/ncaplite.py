@@ -49,6 +49,11 @@ class NCAP(object):
         self.message_handlers = {}
 
     def load_config(self, config_file_path='ncapconfig.xml'):
+        """
+
+        :param config_file_path:
+        :return:
+        """
         logger.debug('NCAP.load_config')
         tree = ET.parse(config_file_path)
         root = tree.getroot()
@@ -67,6 +72,11 @@ class NCAP(object):
                                    find('manufacturer_id').text)
 
     def register_network_interface(self, network_interface):
+        """Register a NetworkInterface object with the NCAP
+
+        :param network_interface:
+        :return:
+        """
         logger.debug('NCAP.register_network_interface')
         self.network_interface = network_interface
         self.network_interface.add_event_handler(
@@ -75,6 +85,11 @@ class NCAP(object):
                                         "message", self.on_network_if_message)
 
     def register_discovery_service(self, discovery):
+        """Register a DiscoveryService object with the NCAP
+
+        :param discovery:
+        :return:
+        """
         logger.debug('NCAP.register_network_interface')
         self.discovery_service = discovery
         self.message_handlers[7108] = self.discovery_service.ncap_client_join
@@ -83,12 +98,28 @@ class NCAP(object):
         self.message_handlers[717] = self.discovery_service.ncap_transducer_discover
 
     def register_transducer_data_access_service(self, transducer_access):
+        """Register a TransducerDataAccessService object with the NCAP
+
+        :param transducer_access:
+        :return:
+        """
         logger.debug('NCAP.register_transducer_data_access_service')
         self.transducer_access = transducer_access
         self.message_handlers[7211] = self.transducer_access.\
             read_transducer_sample_data_from_a_channel_of_a_tim
         self.message_handlers[7217] = self.transducer_access.\
             write_transducer_sample_data_to_a_channel_of_a_tim
+
+    def register_teds_access_service(self, teds_access):
+        """Register a TedsAccessService object with the NCAP
+
+        :param teds_access:
+        :return:
+        """
+        logger.debug('NCAP.register_teds_access_service')
+        self.teds_access = teds_access
+        self.message_handlers[732] = self.teds_access.\
+            read_transducer_channel_teds
 
     def start(self):
         logger.debug('NCAP.start')
