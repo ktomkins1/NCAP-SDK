@@ -779,7 +779,7 @@ class TedsManagerBase(object):
     _metaclass_ = abc.ABCMeta
 
     @abc.abstractmethod
-    def read_teds(self, trans_comm_id, timeout, teds_type, teds):
+    def read_teds(self, trans_comm_id, timeout, teds_type):
         """This method will read the desired TEDS block from the TEDS cache. If
         the TEDS is not available from the cache, it will read the TEDS from
         the TIM. The TEDS information is returned in an ArgumentArray.
