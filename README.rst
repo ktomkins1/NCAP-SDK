@@ -23,10 +23,12 @@ ncaplite contains a python package and reference design for implementing IEEE P2
 
 Features
 --------
-
+* TIM Discovery Service
+* Transducer Channel Discovery Service
 * Read transducer sample from a single channel of a TIM
 * Write transducer sample to a single channel of a TIM
-* TIM Discovery Service
+* Read TransducerChannelTEDS Service
+* Read UserTransducerNameTEDS Service
 
 Developer Setup Using Vagrant
 -----------------------------
@@ -84,7 +86,7 @@ http://www.igniterealtime.org/projects/spark/
 vagrant-hostmanager*
 
 If automatic discovery doesn't work you can use the following
-workaround. you must specify the server IP address in the Advanced
+workaround: You must specify the server IP address in the Advanced
 options for the Spark client. The default configuration for the Vagrant
 box is an IP of:
 
@@ -150,18 +152,19 @@ address,port tuple to the xmpp client, eg.
     xmpp.connect(ugly_hardcoded_address)
 
 
-I've worked around this by handlibg it in ncapconfig.xml though.
+I've worked around this by handling it in ncapconfig.xml.
 So, you'll want specify the XMPP server address and port in there.
 This at least keeps the network configuration separate from the
 application code.
 
 Python
 ~~~~~~~
-The present version does not yet contain the python development
-environment. Right now I'm just using this so I can spin up a local
-jabber server to do some initial testing with. Once the framework is a
-bit more locked in we'll add the python dev environment and a getting
-started tutorial for other folks on the project.
+Presently, the vagrant box is provisioned with a python installation including:
+python-dev
+pip
+tox
+and the dependencies listed in setup.py for this project.
+
 
 Platform Specific Notes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
