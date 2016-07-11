@@ -580,9 +580,15 @@ class TestNcaplite(unittest.TestCase):
             error_code = ieee1451.Error(
                     ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                     ieee1451.ErrorCode.NO_ERROR)
-            xmlpath = 'tests/TransducerChannelMock.xml'
-            my_ted = teds_support.teds_text_from_file(xmlpath)
-            self.tedcash[trans_comm_id] = {teds_type: my_ted}
+            xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+            xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+            teds_types ={teds_support.TEDSType.CHAN_TEDS: "teds:TransducerChannelTEDS",
+                         teds_support.TEDSType.XDCR_NAME: "teds:UserTransducerNameTEDS"}
+            tc_dict = dict()
+            for k, v in iter(teds_types.items()):
+                my_teds = teds_support.teds_element_from_file(v, xmlns, xmlpath)
+                tc_dict[k] = my_teds[0]
+            self.tedcash[trans_comm_id] = tc_dict
             return {'error_code': error_code}
         self.tedcash = dict()
 
@@ -656,8 +662,10 @@ class TestNcaplite(unittest.TestCase):
 
         aa = ieee1451.ArgumentArray()
 
-        expected_teds_text = teds_support.teds_text_from_file(
-                    'tests/TransducerChannelMock.xml')
+        xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+        xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+        tc_teds_list = teds_support.teds_element_from_file('teds:TransducerChannelTEDS', xmlns, xmlpath)
+        expected_teds_text = tc_teds_list[0]
 
         arg = ieee1451.Argument(ieee1451.TypeCode.STRING_TC,
                                 expected_teds_text)
