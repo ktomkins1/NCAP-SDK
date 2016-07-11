@@ -37,9 +37,15 @@ class TestTEDSAccessServices(unittest.TestCase):
             error_code = ieee1451.Error(
                     ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
                     ieee1451.ErrorCode.NO_ERROR)
-            xmlpath = 'tests/TransducerChannelMock.xml'
-            my_ted = teds_support.teds_text_from_file(xmlpath)
-            self.tedcash[trans_comm_id] = {teds_type: my_ted}
+            xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+            xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+            teds_types ={teds_support.TEDSType.CHAN_TEDS: "teds:TransducerChannelTEDS",
+                         teds_support.TEDSType.XDCR_NAME: "teds:UserTransducerNameTEDS"}
+            tc_dict = dict()
+            for k, v in iter(teds_types.items()):
+                my_teds = teds_support.teds_element_from_file(v, xmlns, xmlpath)
+                tc_dict[k] = my_teds[0]
+            self.tedcash[trans_comm_id] = tc_dict
             return {'error_code': error_code}
         self.tedcash = dict()
 
@@ -67,14 +73,17 @@ class TestTEDSAccessServices(unittest.TestCase):
         tedsvc.register_transducer_access_service(tdaccs)
         tedsvc.register_teds_manager(tedsmgr)
 
-        expected = teds_support.teds_dict_from_file(
-                    'tests/TransducerChannelMock.xml')
+        xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+        xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+        tc_teds_list = teds_support.teds_element_from_file('teds:TransducerChannelTEDS', xmlns, xmlpath)
+        expected = teds_support.teds_dict_from_xml(tc_teds_list[0])
 
         args = {"ncap_id": 1234,
                 "tim_id": 1,
                 "channel_id": 1,
                 "timeout": ieee1451.TimeDuration(secs=1, nsecs=0)
                 }
+
 
         result = tedsvc.read_transducer_channel_teds(**args)
 

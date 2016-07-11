@@ -10,8 +10,9 @@
 """
 # -*- coding: utf-8 -*-
 import xmltodict
+import xml.etree.ElementTree as ET
 from enum import Enum
-
+from collections import OrderedDict
 
 class ChanType(Enum):
     """Defines TransducerChannel type."""
@@ -72,3 +73,35 @@ def teds_text_from_file(xmlpath):
     with open(xmlpath) as fd:
         tedtext = fd.read()
     return tedtext
+
+def teds_element_from_file(key, xmlns, xmlpath):
+    """
+    Get a list of specific TEDS xml elements from an xml file
+    :param key: String in the format namespace:Element, eg. 'teds:TransducerChannelTEDS'
+    :param xmlns: Dict which defines the namespace to use, eg. {'teds': 'http://localhost/1451HTTPAPI'}
+    :param xmlpath: The path to the XML file, e.g 'tests/SmartTransducerTEDSMock.xml'
+    :return: A list of the matching XML elements
+    """
+    tree = ET.parse(xmlpath)
+    root = tree.getroot()
+    tedslist = []
+    for teds in root.findall(key, xmlns):
+        teds_xml_str = ET.tostring(teds, 'UTF-8', method='xml')
+        tedslist.append(teds_xml_str)
+    return tedslist
+
+def subitem(key, d):
+    """
+
+    :param key:
+    :param d:
+    :return:
+    """
+    if key in d.keys(): return d[key]
+    for k, v in iter(d.items()):
+        if isinstance(v, OrderedDict):
+            item = subitem(key,v)
+            if item is not None:
+                return item
+
+
