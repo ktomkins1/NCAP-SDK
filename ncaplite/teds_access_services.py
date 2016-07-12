@@ -63,3 +63,41 @@ class TEDSAccessServices(object):
                   'transducer_channel_teds': transducer_channel_teds}
 
         return result
+
+    def read_user_transducer_name_teds(self, ncap_id, tim_id, channel_id, timeout):
+            """
+
+            :param ncap_id: the NCAP ID
+            :param tim_id:  the TIM ID
+            :param channel_id: the Transducer Channel ID
+            :param timeout: TimeDuration indicating the timeout duration
+            :return: a dictionary containing:
+                error_code: an ErrorCode object
+                transducer_channel_teds: An ArgumentArray containing the TransducerChannelTEDS information
+            """
+
+            error_code = ieee1451.Error(
+                                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                                ieee1451.ErrorCode.NO_ERROR)
+
+            opened = self.transducer_access.open(tim_id,
+                                                 channel_id)
+
+            trans_comm_id = opened['trans_comm_id']
+            error = opened['error_code']
+
+            teds_type = teds_support.TEDSType.XDCR_NAME
+
+            utcres = self.teds_manager.update_teds_cache(trans_comm_id, timeout, teds_type)
+            error = utcres['error_code']
+
+            rtres = self.teds_manager.read_teds(trans_comm_id, timeout, teds_type)
+            error = rtres['error_code']
+            transducer_channel_teds = rtres['teds']
+
+            self.transducer_access.close(trans_comm_id)
+
+            result = {'error_code': error,
+                      'transducer_name_teds': transducer_channel_teds}
+
+            return result
