@@ -692,6 +692,137 @@ class TestNcaplite(unittest.TestCase):
 
         self.assertEqual(expected_teds_dict, actual_teds_dict)
 
+    def test_client_can_read_user_transducer_name_teds(self):
+        """ Test that a client can read a transducer channel TEDS."""
+        def open_mock(tim_id, channel_id):
+            error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+            trans_comm_id = 1
+            return {'error_code': error_code, 'trans_comm_id': trans_comm_id}
+
+        def close_mock(trans_comm_id):
+            error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+            return {'error_code': error_code}
+
+        def update_teds_cache_mock(trans_comm_id, timeout, teds_type):
+            error_code = ieee1451.Error(
+                    ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                    ieee1451.ErrorCode.NO_ERROR)
+            xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+            xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+            teds_types ={teds_support.TEDSType.CHAN_TEDS: "teds:TransducerChannelTEDS",
+                         teds_support.TEDSType.XDCR_NAME: "teds:UserTransducerNameTEDS"}
+            tc_dict = dict()
+            for k, v in iter(teds_types.items()):
+                my_teds = teds_support.teds_element_from_file(v, xmlns, xmlpath)
+                tc_dict[k] = my_teds[0]
+            self.tedcash[trans_comm_id] = tc_dict
+            return {'error_code': error_code}
+        self.tedcash = dict()
+
+        def read_teds_mock(trans_comm_id, timeout, teds_type):
+            error_code = ieee1451.Error(
+                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                ieee1451.ErrorCode.NO_ERROR)
+            ted = self.tedcash[trans_comm_id][teds_type]
+            tc = ieee1451.TypeCode.STRING_TC
+            value = ted
+            arg = ieee1451.Argument(tc, value)
+            arg_array = ieee1451.ArgumentArray()
+            arg_array.put_by_index(0, arg)
+            return {'error_code': error_code, 'teds': arg_array}
+
+        def client_on_data(msg):
+            resp = self.codec.decode(msg['body'])
+            self.actual_response = resp
+        self.codec = simple_json_codec.SimpleJsonCodec()
+
+        tdaccs = mock.Mock(spec=transducer_services_base.TransducerAccessBase)
+        tdaccs.open.side_effect = open_mock
+        tdaccs.close.side_effect = close_mock
+
+        tedsmgr = mock.Mock(spec=transducer_services_base.TedsManagerBase)
+        tedsmgr.update_teds_cache.side_effect = update_teds_cache_mock
+        tedsmgr.read_teds.side_effect = read_teds_mock
+
+        teds_svc = teds_access_services.TEDSAccessServices()
+        teds_svc.register_transducer_access_service(tdaccs)
+        teds_svc.register_teds_manager(tedsmgr)
+
+        roster_path = 'tests/testroster.xml'
+        ncap = ncaplite.NCAP()
+        ncap.load_config(self.config_file_path)
+        network_if = network_interface.NetworkClient(
+                ncap.jid, ncap.password, (ncap.broker_ip, ncap.broker_port))
+        network_if.codec = simple_json_codec.SimpleJsonCodec()
+        ncap.register_network_interface(network_if)
+        discovery = discovery_services.DiscoveryServices()
+        discovery.open_roster(roster_path)
+        ncap.register_discovery_service(discovery)
+        ncap.register_teds_access_service(teds_svc)
+
+        ncap_client = ncaplite.NCAP()
+        ncap_client.type = "client"
+        client_jid = 'unittest@ncaplite.loc'
+        client_password = 'mypassword'
+        client_if = network_interface.NetworkClient(
+            client_jid, client_password, (ncap.broker_ip, ncap.broker_port))
+        client_if.codec = simple_json_codec.SimpleJsonCodec()
+
+        # monkey-patch the data received method
+        ncap_client.on_network_if_message = client_on_data
+
+        ncap_client.register_network_interface(client_if)
+
+        ncap.start()
+        ncap_client.start()
+        time.sleep(.5)
+
+        request = [733, {
+                'ncap_id': 1234,
+                'tim_id': 1,
+                'channel_id': 2,
+                'timeout': ieee1451.TimeDuration(1, 0000)}]
+
+        ec = ieee1451.Error(
+                ieee1451.ErrorSource.ERROR_SOURCE_LOCAL_0,
+                ieee1451.ErrorCode.NO_ERROR)
+
+        aa = ieee1451.ArgumentArray()
+
+        xmlpath = 'tests/SmartTransducerTEDSMock.xml'
+        xmlns = {'teds': 'http://localhost/1451HTTPAPI'}
+        tc_teds_list = teds_support.teds_element_from_file('teds:UserTransducerNameTEDS', xmlns, xmlpath)
+        expected_teds_text = tc_teds_list[0]
+
+        arg = ieee1451.Argument(ieee1451.TypeCode.STRING_TC,
+                                expected_teds_text)
+        aa.put_by_index(0, arg)
+
+        expected_response = [733, {
+                                'error_code': ec,
+                                'transducer_name_teds': aa
+                                }]
+
+        msg = ncap_client.network_interface.codec.encode(request)
+        ncap_client.network_interface.send_message(
+                                    mto=ncap.jid, mbody=msg, mtype='chat')
+        time.sleep(.5)
+
+        ncap_client.stop()
+        ncap.stop()
+
+        self.assertEqual(expected_response, self.actual_response)
+
+        expected_teds_dict = teds_support.teds_dict_from_xml(expected_teds_text)
+        actual_teds_dict = teds_support.teds_dict_from_xml(self.actual_response[1]\
+                                                               ['transducer_name_teds'].get_by_index(0).value)
+
+        self.assertEqual(expected_teds_dict, actual_teds_dict)
+
 if __name__ == '__main__':
     import sys
     sys.exit(unittest.main())

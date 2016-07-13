@@ -120,6 +120,8 @@ class NCAP(object):
         self.teds_access = teds_access
         self.message_handlers[732] = self.teds_access.\
             read_transducer_channel_teds
+        self.message_handlers[733] = self.teds_access.\
+            read_user_transducer_name_teds
 
     def start(self):
         logger.debug('NCAP.start')
